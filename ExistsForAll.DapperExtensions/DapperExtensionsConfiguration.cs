@@ -8,18 +8,7 @@ using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
 {
-    public interface IDapperExtensionsConfiguration
-    {
-        Type DefaultMapper { get; }
-        IList<Assembly> MappingAssemblies { get; }
-        ISqlDialect Dialect { get; }
-        IClassMapper GetMap(Type entityType);
-        IClassMapper GetMap<T>() where T : class;
-        void ClearCache();
-        Guid GetNextGuid();
-    }
-
-    public class DapperExtensionsConfiguration : IDapperExtensionsConfiguration
+	public class DapperExtensionsConfiguration : IDapperExtensionsConfiguration
     {
         private readonly ConcurrentDictionary<Type, IClassMapper> _classMaps = new ConcurrentDictionary<Type, IClassMapper>();
 
