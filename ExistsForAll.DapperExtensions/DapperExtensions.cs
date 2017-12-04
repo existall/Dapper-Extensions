@@ -9,7 +9,7 @@ namespace ExistsForAll.DapperExtensions
 {
 	public static class DapperExtensions
 	{
-		private readonly static object _lock = new object();
+		private static readonly object Lock = new object();
 
 		private static Func<IDapperExtensionsConfiguration, IDapperImplementor> _instanceFactory;
 		private static IDapperImplementor _instance;
@@ -21,15 +21,9 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static Type DefaultMapper
 		{
-			get
-			{
-				return _configuration.DefaultMapper;
-			}
+			get => _configuration.DefaultMapper;
 
-			set
-			{
-				Configure(value, _configuration.MappingAssemblies, _configuration.Dialect);
-			}
+			set => Configure(value, _configuration.MappingAssemblies, _configuration.Dialect);
 		}
 
 		/// <summary>
@@ -38,15 +32,9 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static ISqlDialect SqlDialect
 		{
-			get
-			{
-				return _configuration.Dialect;
-			}
+			get => _configuration.Dialect;
 
-			set
-			{
-				Configure(_configuration.DefaultMapper, _configuration.MappingAssemblies, value);
-			}
+			set => Configure(_configuration.DefaultMapper, _configuration.MappingAssemblies, value);
 		}
 
 		/// <summary>
@@ -54,15 +42,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static Func<IDapperExtensionsConfiguration, IDapperImplementor> InstanceFactory
 		{
-			get
-			{
-				if (_instanceFactory == null)
-				{
-					_instanceFactory = config => new DapperImplementor(new SqlGenerator(config));
-				}
-
-				return _instanceFactory;
-			}
+			get { return _instanceFactory ?? (_instanceFactory = config => new DapperImplementor(new SqlGenerator(config))); }
 			set
 			{
 				_instanceFactory = value;
@@ -79,7 +59,7 @@ namespace ExistsForAll.DapperExtensions
 			{
 				if (_instance == null)
 				{
-					lock (_lock)
+					lock (Lock)
 					{
 						if (_instance == null)
 						{

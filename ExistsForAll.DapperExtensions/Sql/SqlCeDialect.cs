@@ -6,22 +6,13 @@ namespace ExistsForAll.DapperExtensions.Sql
 {
     public class SqlCeDialect : SqlDialectBase
     {
-        public override char OpenQuote
-        {
-            get { return '['; }
-        }
+        public override char OpenQuote => '[';
 
-        public override char CloseQuote
-        {
-            get { return ']'; }
-        }
+	    public override char CloseQuote => ']';
 
-        public override bool SupportsMultipleStatements
-        {
-            get { return false; }
-        }
+	    public override bool SupportsMultipleStatements => false;
 
-        public override string GetTableName(string schemaName, string tableName, string alias)
+	    public override string GetTableName(string schemaName, string tableName, string alias)
         {
             if (string.IsNullOrWhiteSpace(tableName))
             {

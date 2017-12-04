@@ -12,12 +12,9 @@ namespace ExistsForAll.DapperExtensions.Sql
             throw new System.NotImplementedException("Oracle does not support get last inserted identity.");
         }
 
-        public override bool SupportsMultipleStatements
-        {
-            get { return false; }
-        }
+        public override bool SupportsMultipleStatements => false;
 
-        //from Simple.Data.Oracle implementation https://github.com/flq/Simple.Data.Oracle/blob/master/Simple.Data.Oracle/OraclePager.cs
+	    //from Simple.Data.Oracle implementation https://github.com/flq/Simple.Data.Oracle/blob/master/Simple.Data.Oracle/OraclePager.cs
         public override string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters)
         {
             var toSkip = page * resultsPerPage;
@@ -62,19 +59,10 @@ namespace ExistsForAll.DapperExtensions.Sql
             return value.ToUpper();
         }
 
-        public override char ParameterPrefix
-        {
-            get { return ':'; }
-        }
+        public override char ParameterPrefix => ':';
 
-        public override char OpenQuote
-        {
-            get { return '"'; }
-        }
+	    public override char OpenQuote => '"';
 
-        public override char CloseQuote
-        {
-            get { return '"'; }
-        }
+	    public override char CloseQuote => '"';
     }
 }

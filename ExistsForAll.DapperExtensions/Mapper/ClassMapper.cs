@@ -32,12 +32,9 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// </summary>
         public IList<IPropertyMap> Properties { get; private set; }
 
-        public Type EntityType
-        {
-            get { return typeof(T); }
-        }
+        public Type EntityType => typeof(T);
 
-        public ClassMapper()
+	    public ClassMapper()
         {
             PropertyTypeKeyTypeMapping = new Dictionary<Type, KeyType>
                                              {

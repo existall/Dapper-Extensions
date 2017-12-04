@@ -17,12 +17,9 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// <summary>
         /// Gets the name of the property by using the specified propertyInfo.
         /// </summary>
-        public string Name
-        {
-            get { return PropertyInfo.Name; }
-        }
+        public string Name => PropertyInfo.Name;
 
-        /// <summary>
+	    /// <summary>
         /// Gets the column name for the current property.
         /// </summary>
         public string ColumnName { get; private set; }

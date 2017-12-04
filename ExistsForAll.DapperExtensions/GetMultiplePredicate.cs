@@ -12,12 +12,9 @@ namespace ExistsForAll.DapperExtensions
             _items = new List<GetMultiplePredicateItem>();
         }
 
-        public IEnumerable<GetMultiplePredicateItem> Items
-        {
-            get { return _items.AsReadOnly(); }
-        }
+        public IEnumerable<GetMultiplePredicateItem> Items => _items.AsReadOnly();
 
-        public void Add<T>(IPredicate predicate, IList<ISort> sort = null) where T : class
+	    public void Add<T>(IPredicate predicate, IList<ISort> sort = null) where T : class
         {
             _items.Add(new GetMultiplePredicateItem
                            {

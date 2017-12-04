@@ -23,13 +23,7 @@ namespace ExistsForAll.DapperExtensions
 			}
 		}
 
-		public bool HasActiveTransaction
-		{
-			get
-			{
-				return _transaction != null;
-			}
-		}
+		public bool HasActiveTransaction => _transaction != null;
 
 		public IDbConnection Connection { get; private set; }
 

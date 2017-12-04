@@ -22,15 +22,9 @@ namespace ExistsForAll.DapperExtensions
         /// </summary>
         public static Type DefaultMapper
         {
-            get
-            {
-                return _configuration.DefaultMapper;
-            }
+            get => _configuration.DefaultMapper;
 
-            set
-            {
-                Configure(value, _configuration.MappingAssemblies, _configuration.Dialect);
-            }
+	        set => Configure(value, _configuration.MappingAssemblies, _configuration.Dialect);
         }
 
         /// <summary>
@@ -39,15 +33,9 @@ namespace ExistsForAll.DapperExtensions
         /// </summary>
         public static ISqlDialect SqlDialect
         {
-            get
-            {
-                return _configuration.Dialect;
-            }
+            get => _configuration.Dialect;
 
-            set
-            {
-                Configure(_configuration.DefaultMapper, _configuration.MappingAssemblies, value);
-            }
+	        set => Configure(_configuration.DefaultMapper, _configuration.MappingAssemblies, value);
         }
 
         /// <summary>
