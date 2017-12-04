@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DapperExtensions.Sql
+namespace ExistsForAll.DapperExtensions.Sql
 {
     public class SqlServerDialect : SqlDialectBase
     {

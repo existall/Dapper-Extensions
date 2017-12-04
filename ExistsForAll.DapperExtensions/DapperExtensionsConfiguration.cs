@@ -90,14 +90,14 @@ namespace ExistsForAll.DapperExtensions
             {
                 Type[] types = a.GetTypes();
                 return (from type in types
-                        let interfaceType = type.GetInterface(typeof(IClassMapper<>).FullName)
+                        let interfaceType = type.GetTypeInfo().GetInterface(typeof(IClassMapper<>).FullName)
                         where
                             interfaceType != null &&
                             interfaceType.GetGenericArguments()[0] == entityType
                         select type).SingleOrDefault();
             };
 
-            Type result = getType(entityType.Assembly);
+            Type result = getType(entityType.GetTypeInfo().Assembly);
             if (result != null)
             {
                 return result;
@@ -112,7 +112,7 @@ namespace ExistsForAll.DapperExtensions
                 }
             }
 
-            return getType(entityType.Assembly);
+            return getType(entityType.GetTypeInfo().Assembly);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using DapperExtensions.Mapper;
+﻿using ExistsForAll.DapperExtensions.Mapper;
 
 namespace DapperExtensions.Test.IntegrationTests.Oracle.Data
 {

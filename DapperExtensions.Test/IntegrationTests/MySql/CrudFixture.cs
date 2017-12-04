@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DapperExtensions.Test.Data;
+using ExistsForAll.DapperExtensions;
 using NUnit.Framework;
 
 namespace DapperExtensions.Test.IntegrationTests.MySql

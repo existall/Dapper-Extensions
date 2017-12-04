@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DapperExtensions.Mapper;
-using DapperExtensions.Sql;
 using DapperExtensions.Test.Helpers;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;

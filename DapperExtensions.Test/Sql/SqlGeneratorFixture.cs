@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DapperExtensions.Mapper;
-using DapperExtensions.Sql;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 using Moq;
 using NUnit.Framework;
 

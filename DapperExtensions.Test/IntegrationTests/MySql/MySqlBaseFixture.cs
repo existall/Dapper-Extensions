@@ -5,8 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Dapper;
-using DapperExtensions.Mapper;
-using DapperExtensions.Sql;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 

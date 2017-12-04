@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DapperExtensions.Test.Data;
+using ExistsForAll.DapperExtensions;
 using NUnit.Framework;
 using Animal = DapperExtensions.Test.IntegrationTests.Oracle.Data.Animal;
 using Person = DapperExtensions.Test.IntegrationTests.Oracle.Data.Person;

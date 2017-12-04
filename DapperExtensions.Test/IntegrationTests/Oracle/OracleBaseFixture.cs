@@ -2,8 +2,9 @@
 using System.IO;
 using System.Reflection;
 using Dapper;
-using DapperExtensions.Mapper;
-using DapperExtensions.Sql;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 using NUnit.Framework;
 using Oracle.ManagedDataAccess.Client;
 

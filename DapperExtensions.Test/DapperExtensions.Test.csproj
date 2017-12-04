@@ -150,10 +150,6 @@
       <Project>{87220EF9-8EE4-4EB0-829C-31C51BD7B750}</Project>
       <Name>DapperExtensions.Test.Maps</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DapperExtensions\DapperExtensions.csproj">
-      <Project>{4C1A2C6C-A469-4C87-98D1-F1D517FA1ACF}</Project>
-      <Name>DapperExtensions</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IntegrationTests\MySql\Sql\CreatePersonTable.sql" />

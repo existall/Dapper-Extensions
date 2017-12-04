@@ -4,8 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using DapperExtensions.Mapper;
 using DapperExtensions.Test.Helpers;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
 using Moq;
 using NUnit.Framework;
 

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DapperExtensions.Mapper;
 using DapperExtensions.Test.Entities;
+using ExistsForAll.DapperExtensions.Mapper;
 
 namespace DapperExtensions.Test.Maps
 {

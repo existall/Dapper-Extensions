@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Mapper;
 
 namespace DapperExtensions.Test.Data
 {

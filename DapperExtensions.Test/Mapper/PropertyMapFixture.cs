@@ -2,7 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.Mapper;
 using NUnit.Framework;
 
 namespace DapperExtensions.Test.Mapper

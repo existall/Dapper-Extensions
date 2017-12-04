@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Dapper;
-using DapperExtensions.Sql;
 using DapperExtensions.Test.IntegrationTests;
 using MySql.Data.MySqlClient;
 
