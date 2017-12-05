@@ -106,7 +106,7 @@ namespace ExistsForAll.DapperExtensions
 			}
 
 			IDictionary<string, object> keyValues = new ExpandoObject();
-			var sql = SqlGenerator.Insert<T>();
+			var sql = SqlGenerator.Insert(classMap);
 
 			if (identityColumn != null)
 			{
@@ -159,7 +159,7 @@ namespace ExistsForAll.DapperExtensions
 
 				connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
 
-				var value = dynamicParameters.Get<object>(SqlGenerator.Configuration.Dialect.ParameterPrefix + "IdOutParam");
+				var value = dynamicParameters.Get<object>(Configuration.Dialect.ParameterPrefix + "IdOutParam");
 				keyValues.Add(triggerIdentityColumn.Name, value);
 				triggerIdentityColumn.PropertyInfo.SetValue(entity, value, null);
 			}
@@ -183,10 +183,10 @@ namespace ExistsForAll.DapperExtensions
 
 		public bool Update<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
 		{
-			IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
+			IClassMapper classMap = _classMapperRepository.GetMap<T>();
 			var predicate = GetKeyPredicate<T>(classMap, entity);
 			var parameters = new Dictionary<string, object>();
-			var sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
+			var sql = SqlGenerator.Update<T>(predicate, parameters, ignoreAllKeyProperties);
 			var dynamicParameters = new DynamicParameters();
 
 			var columns = ignoreAllKeyProperties

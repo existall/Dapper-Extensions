@@ -47,7 +47,7 @@ namespace ExistsForAll.DapperExtensions
             {
                 if (_instanceFactory == null)
                 {
-                    _instanceFactory = config => new DapperAsyncImplementor(new SqlGenerator(config));
+                    //_instanceFactory = config => new DapperAsyncImplementor(new SqlGenerator(config));
                 }
 
                 return _instanceFactory;

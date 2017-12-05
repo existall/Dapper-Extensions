@@ -20,15 +20,13 @@ namespace ExistsForAll.DapperExtensions.Sql
 			Context = new SqlGenerationContext(Configuration.Dialect,_classMapperRepository);
 		}
 
-		public string Select<T>(IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters) where T : IClassMapper
+		public string Select(IClassMapper map, IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(parameters, nameof(parameters));
 
-			var classMap = _classMapperRepository.GetMap<T>();
-
 			var sql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
-				BuildSelectColumns(classMap),
-				GetTableName(classMap)));
+				BuildSelectColumns(map),
+				GetTableName(map)));
 
 			if (predicate != null)
 			{
@@ -39,22 +37,20 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (sort != null && sort.Any())
 			{
 				sql.Append(" ORDER BY ")
-					.Append(sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings());
+					.Append(sort.Select(s => GetColumnName(map, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings());
 			}
 
 			return sql.ToString();
 		}
 
-		public string SelectPaged<T>(IPredicate predicate,
+		public string SelectPaged(IClassMapper classMap, IPredicate predicate,
 			IList<ISort> sort,
 			int page,
 			int resultsPerPage,
-			IDictionary<string, object> parameters) where T : IClassMapper
+			IDictionary<string, object> parameters)
 		{
 			Guard.EnumerableArgumentNull(sort, nameof(sort));
 			Guard.ArgumentNull(parameters,nameof(parameters));
-
-			var classMap = _classMapperRepository.GetMap<T>();
 
 			var innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
@@ -72,16 +68,14 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql;
 		}
 
-		public string SelectSet<T>(IPredicate predicate,
+		public string SelectSet(IClassMapper classMap, IPredicate predicate,
 			IList<ISort> sort,
 			int firstResult,
 			int maxResults,
-			IDictionary<string, object> parameters) where T : IClassMapper
+			IDictionary<string, object> parameters)
 		{
 			Guard.EnumerableArgumentNull(sort, nameof(sort));
 			Guard.ArgumentNull(parameters,nameof(parameters));
-
-			var classMap = _classMapperRepository.GetMap<T>();
 
 			var innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
@@ -99,11 +93,9 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql;
 		}
 
-		public string Count<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper
+		public string Count(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(parameters, nameof(parameters));
-
-			var classMap = _classMapperRepository.GetMap<T>();
 
 			var sql = new StringBuilder(string.Format("SELECT COUNT(*) AS {0}Total{1} FROM {2}",
 								Configuration.Dialect.OpenQuote,
@@ -118,10 +110,8 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql.ToString();
 		}
 
-		public string Insert<T>() where T : IClassMapper
+		public string Insert(IClassMapper classMap)
 		{
-			var classMap = _classMapperRepository.GetMap<T>();
-
 			var columns = classMap.GetMutableColumns();
 
 			if (!columns.Any())
@@ -148,14 +138,12 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql;
 		}
 
-		public string Update<T>(IPredicate predicate,
+		public string Update(IClassMapper classMap, IPredicate predicate,
 			IDictionary<string, object> parameters,
-			bool ignoreAllKeyProperties) where T : IClassMapper
+			bool ignoreAllKeyProperties)
 		{
 			Guard.ArgumentNull(predicate, nameof(predicate));
 			Guard.ArgumentNull(parameters, nameof(parameters));
-
-			var classMap = _classMapperRepository.GetMap<T>();
 
 			var columns = ignoreAllKeyProperties
 				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey).ToArray()
@@ -166,8 +154,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 				throw new ArgumentException("No columns were mapped.");
 			}
 
-			var setSql =
-				columns.Select(
+			var setSql = columns.Select(
 					p =>
 					string.Format(
 						"{0} = {1}{2}", GetColumnName(classMap, p, false), Configuration.Dialect.ParameterPrefix, p.Name));
@@ -178,12 +165,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 				predicate.GetSql(Context, parameters));
 		}
 
-		public string Delete<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper
+		public string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(predicate, nameof(predicate));
 			Guard.ArgumentNull(parameters, nameof(parameters));
-
-			var classMap = _classMapperRepository.GetMap<T>();
 
 			var sql = new StringBuilder(string.Format("DELETE FROM {0}", GetTableName(classMap)));
 			sql.Append(" WHERE ").Append(predicate.GetSql(Context, parameters));
@@ -195,10 +180,8 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return Configuration.Dialect.SupportsMultipleStatements;
 		}
 
-		public string IdentitySql<T>()
+		public string IdentitySql(IClassMapper classMap)
 		{
-			var classMap = _classMapperRepository.GetMap<T>();
-
 			return classMap.IdentitySql(Configuration.Dialect);
 		}
 

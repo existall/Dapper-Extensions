@@ -5,16 +5,16 @@ namespace ExistsForAll.DapperExtensions.Sql
 {
 	public interface ISqlGenerator
 	{
-		string Select<T>(IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters) where T : IClassMapper;
-		string SelectPaged<T>(IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDictionary<string, object> parameters) where T : IClassMapper;
-		string SelectSet<T>(IPredicate predicate, IList<ISort> sort, int firstResult, int maxResults, IDictionary<string, object> parameters) where T : IClassMapper;
-		string Count<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper;
+		string Select(IClassMapper map, IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters);
+		string SelectPaged(IClassMapper map, IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDictionary<string, object> parameters);
+		string SelectSet(IClassMapper map, IPredicate predicate, IList<ISort> sort, int firstResult, int maxResults, IDictionary<string, object> parameters);
+		string Count(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
-		string Insert<T>() where T : IClassMapper;
-		string Update<T>(IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties) where T : IClassMapper;
-		string Delete<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper;
+		string Insert(IClassMapper map);
+		string Update(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+		string Delete(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
-		string IdentitySql<T>();
+		string IdentitySql(IClassMapper map);
 		//string GetTableName(IClassMapper map);
 		//string GetColumnName(IClassMapper map, IPropertyMap property, bool includeAlias);
 		//string GetColumnName(IClassMapper map, string propertyName, bool includeAlias);

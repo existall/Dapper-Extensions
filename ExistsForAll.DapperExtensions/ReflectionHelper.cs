@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ExistsForAll.DapperExtensions
 {
-	public static class ReflectionHelper
+	public static class ReflectionHelper<T>
 	{
 		private static List<Type> _simpleTypes = new List<Type>
 							   {
@@ -31,7 +31,7 @@ namespace ExistsForAll.DapperExtensions
 								   typeof(byte[])
 							   };
 
-		public static MemberInfo GetProperty(LambdaExpression lambda)
+		public static MemberInfo GetProperty(Expression<Func<T,object>> lambda)
 		{
 			Expression expr = lambda;
 			for (; ; )
@@ -73,14 +73,6 @@ namespace ExistsForAll.DapperExtensions
 			return result;
 		}
 
-		public static string AppendStrings(this IEnumerable<string> list, string seperator = ", ")
-		{
-			return list.Aggregate(
-				new StringBuilder(),
-				(sb, s) => (sb.Length == 0 ? sb : sb.Append(seperator)).Append(s),
-				sb => sb.ToString());
-		}
-
 		public static bool IsSimpleType(Type type)
 		{
 			var actualType = type;
@@ -91,10 +83,13 @@ namespace ExistsForAll.DapperExtensions
 
 			return _simpleTypes.Contains(actualType);
 		}
+	}
 
+	internal static class XExtensions
+	{
 		public static string GetParameterName(this IDictionary<string, object> parameters, string parameterName, char parameterPrefix)
 		{
-			return string.Format("{0}{1}_{2}", parameterPrefix, parameterName, parameters.Count);
+			return String.Format("{0}{1}_{2}", parameterPrefix, parameterName, parameters.Count);
 		}
 
 		public static string SetParameterName(this IDictionary<string, object> parameters, string parameterName, object value, char parameterPrefix)
@@ -102,6 +97,14 @@ namespace ExistsForAll.DapperExtensions
 			string name = parameters.GetParameterName(parameterName, parameterPrefix);
 			parameters.Add(name, value);
 			return name;
+		}
+
+		public static string AppendStrings(this IEnumerable<string> list, string seperator = ", ")
+		{
+			return list.Aggregate(
+				new StringBuilder(),
+				(sb, s) => (sb.Length == 0 ? sb : sb.Append(seperator)).Append(s),
+				sb => sb.ToString());
 		}
 	}
 }

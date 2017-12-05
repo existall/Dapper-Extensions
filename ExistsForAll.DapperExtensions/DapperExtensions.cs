@@ -42,7 +42,11 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static Func<IDapperExtensionsConfiguration, IDapperImplementor> InstanceFactory
 		{
-			get { return _instanceFactory ?? (_instanceFactory = config => new DapperImplementor(new SqlGenerator(config))); }
+			get
+			{
+				return null;
+				//return _instanceFactory ?? (_instanceFactory = config => new DapperImplementor(new SqlGenerator(config)));
+			}
 			set
 			{
 				_instanceFactory = value;
@@ -209,7 +213,8 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static IClassMapper GetMap<T>() where T : class
 		{
-			return Instance.SqlGenerator.Configuration.GetMap<T>();
+			return null;
+			//return Instance..Configuration.GetMap<T>();
 		}
 
 		/// <summary>
@@ -217,7 +222,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static void ClearCache()
 		{
-			Instance.SqlGenerator.Configuration.ClearCache();
+			//Instance.SqlGenerator.Configuration.ClearCache();
 		}
 
 		/// <summary>
@@ -226,7 +231,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static Guid GetNextGuid()
 		{
-			return Instance.SqlGenerator.Configuration.GetNextGuid();
+			return _configuration.GetNextGuid();
 		}
 	}
 }
