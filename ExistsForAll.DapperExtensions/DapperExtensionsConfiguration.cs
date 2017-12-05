@@ -10,13 +10,10 @@ namespace ExistsForAll.DapperExtensions
 {
 	public class DapperExtensionsConfiguration : IDapperExtensionsConfiguration
 	{
-		private readonly ConcurrentDictionary<Type, IClassMapper> _classMaps = new ConcurrentDictionary<Type, IClassMapper>();
-
 		public DapperExtensionsConfiguration()
 			: this(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect())
 		{
 		}
-
 
 		public DapperExtensionsConfiguration(Type defaultMapper, IList<Assembly> mappingAssemblies, ISqlDialect sqlDialect)
 		{
@@ -25,37 +22,9 @@ namespace ExistsForAll.DapperExtensions
 			Dialect = sqlDialect;
 		}
 
-		public Type DefaultMapper { get; private set; }
-		public IList<Assembly> MappingAssemblies { get; private set; }
-		public ISqlDialect Dialect { get; private set; }
-
-		public IClassMapper GetMap(Type entityType)
-		{
-			IClassMapper map;
-			if (!_classMaps.TryGetValue(entityType, out map))
-			{
-				Type mapType = GetMapType(entityType);
-				if (mapType == null)
-				{
-					mapType = DefaultMapper.MakeGenericType(entityType);
-				}
-
-				map = Activator.CreateInstance(mapType) as IClassMapper;
-				_classMaps[entityType] = map;
-			}
-
-			return map;
-		}
-
-		public IClassMapper GetMap<T>() where T : class
-		{
-			return GetMap(typeof(T));
-		}
-
-		public void ClearCache()
-		{
-			_classMaps.Clear();
-		}
+		public Type DefaultMapper { get; }
+		public IList<Assembly> MappingAssemblies { get; }
+		public ISqlDialect Dialect { get; }
 
 		public Guid GetNextGuid()
 		{
@@ -71,37 +40,6 @@ namespace ExistsForAll.DapperExtensions
 			Array.Copy(bytes1, bytes1.Length - 2, b, b.Length - 6, 2);
 			Array.Copy(bytes2, bytes2.Length - 4, b, b.Length - 4, 4);
 			return new Guid(b);
-		}
-
-		protected virtual Type GetMapType(Type entityType)
-		{
-			Func<Assembly, Type> getType = a =>
-			{
-				Type[] types = a.GetTypes();
-				return (from type in types
-						let interfaceType = type.GetTypeInfo().GetInterface(typeof(IClassMapper<>).FullName)
-						where
-							interfaceType != null &&
-							interfaceType.GetGenericArguments()[0] == entityType
-						select type).SingleOrDefault();
-			};
-
-			Type result = getType(entityType.GetTypeInfo().Assembly);
-			if (result != null)
-			{
-				return result;
-			}
-
-			foreach (var mappingAssembly in MappingAssemblies)
-			{
-				result = getType(mappingAssembly);
-				if (result != null)
-				{
-					return result;
-				}
-			}
-
-			return getType(entityType.GetTypeInfo().Assembly);
 		}
 	}
 }

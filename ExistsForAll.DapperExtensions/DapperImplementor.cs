@@ -18,7 +18,7 @@ namespace ExistsForAll.DapperExtensions
             SqlGenerator = sqlGenerator;
         }
 
-        public ISqlGenerator SqlGenerator { get; private set; }
+        public ISqlGenerator SqlGenerator { get; }
 
         public T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class
         {

@@ -30,7 +30,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// <summary>
         /// A collection of properties that will map to columns in the database table.
         /// </summary>
-        public IList<IPropertyMap> Properties { get; private set; }
+        public IList<IPropertyMap> Properties { get; }
 
         public Type EntityType => typeof(T);
 
@@ -54,7 +54,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
             Table(typeof(T).Name);
         }
 
-        protected Dictionary<Type, KeyType> PropertyTypeKeyTypeMapping { get; private set; }
+        protected Dictionary<Type, KeyType> PropertyTypeKeyTypeMapping { get; }
 
         public virtual void Schema(string schemaName)
         {

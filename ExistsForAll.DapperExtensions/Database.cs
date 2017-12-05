@@ -25,7 +25,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public bool HasActiveTransaction => _transaction != null;
 
-		public IDbConnection Connection { get; private set; }
+		public IDbConnection Connection { get; }
 
 		public void Dispose()
 		{

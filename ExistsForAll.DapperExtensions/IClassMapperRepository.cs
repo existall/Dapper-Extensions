@@ -9,7 +9,7 @@ namespace ExistsForAll.DapperExtensions
 	{
 		void Initialize(IEnumerable<Assembly> assemblies, Type mapperType);
 		IClassMapper GetMap(Type entityType);
-		IClassMapper GetMap<T>() where T : class;
+		IClassMapper GetMap<T>();
 		void ClearCache();
 	}
 }

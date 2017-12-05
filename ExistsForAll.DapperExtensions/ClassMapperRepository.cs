@@ -24,7 +24,7 @@ namespace ExistsForAll.DapperExtensions
 			return null;
 		}
 
-		public IClassMapper GetMap<T>() where T : class
+		public IClassMapper GetMap<T>()
 		{
 			return GetMap(typeof(T));
 		}

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ExistsForAll.DapperExtensions.Mapper
 {
@@ -7,7 +6,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 	{
 		string SchemaName { get; }
 		string TableName { get; }
-		IList<IPropertyMap> Properties { get; }
+		IPropertyMapCollection Properties { get; }
 		Type EntityType { get; }
 	}
 }
