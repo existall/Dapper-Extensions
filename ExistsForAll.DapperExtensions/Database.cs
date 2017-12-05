@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Data;
 using ExistsForAll.DapperExtensions.Mapper;
@@ -221,4 +221,4 @@ namespace ExistsForAll.DapperExtensions
 			return _dapper.SqlGenerator.Configuration.GetMap<T>();
 		}
 	}
-}
+}*/

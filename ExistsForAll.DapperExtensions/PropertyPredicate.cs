@@ -9,11 +9,14 @@ namespace ExistsForAll.DapperExtensions
 	{
 		public string PropertyName2 { get; set; }
 
-		public override string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
+		public override string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
 		{
-			var columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
-			var columnName2 = GetColumnName(typeof(T2), sqlGenerator, PropertyName2);
-			return string.Format("({0} {1} {2})", columnName, GetOperatorString(), columnName2);
+			var classMapLeft = context.ClassMapperRepository.GetMapOrThrow<T>();
+			var classMapRight = context.ClassMapperRepository.GetMapOrThrow<T2>();
+
+			var columnName = classMapLeft.GetColumnName(context.Dialect, PropertyName);
+			var columnName2 = classMapRight.GetColumnName(context.Dialect, PropertyName2);
+			return $"({columnName} {GetOperatorString()} {columnName2})";
 		}
 	}
 }

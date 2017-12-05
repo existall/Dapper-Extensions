@@ -10,12 +10,14 @@ namespace ExistsForAll.DapperExtensions.Sql
 	{
 		private readonly IClassMapperRepository _classMapperRepository;
 		private IDapperExtensionsConfiguration Configuration { get; }
+		private ISqlGenerationContext Context { get; }
 
 		public SqlGenerator(IDapperExtensionsConfiguration configuration,
 			IClassMapperRepository classMapperRepository)
 		{
 			_classMapperRepository = classMapperRepository;
 			Configuration = configuration;
+			Context = new SqlGenerationContext(Configuration.Dialect,_classMapperRepository);
 		}
 
 		public string Select<T>(IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters) where T : IClassMapper
@@ -31,7 +33,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (predicate != null)
 			{
 				sql.Append(" WHERE ")
-					.Append(predicate.GetSql(this, parameters));
+					.Append(predicate.GetSql(Context, parameters));
 			}
 
 			if (sort != null && sort.Any())
@@ -60,7 +62,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (predicate != null)
 			{
 				innerSql.Append(" WHERE ")
-					.Append(predicate.GetSql(this, parameters));
+					.Append(predicate.GetSql(Context, parameters));
 			}
 
 			var orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
@@ -87,7 +89,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (predicate != null)
 			{
 				innerSql.Append(" WHERE ")
-					.Append(predicate.GetSql(this, parameters));
+					.Append(predicate.GetSql(Context, parameters));
 			}
 
 			var orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
@@ -110,7 +112,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (predicate != null)
 			{
 				sql.Append(" WHERE ")
-					.Append(predicate.GetSql(this, parameters));
+					.Append(predicate.GetSql(new SqlGenerationContext(Configuration.Dialect,_classMapperRepository), parameters));
 			}
 
 			return sql.ToString();
@@ -173,7 +175,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return string.Format("UPDATE {0} SET {1} WHERE {2}",
 				GetTableName(classMap),
 				setSql.AppendStrings(),
-				predicate.GetSql(this, parameters));
+				predicate.GetSql(Context, parameters));
 		}
 
 		public string Delete<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper
@@ -184,7 +186,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			var classMap = _classMapperRepository.GetMap<T>();
 
 			var sql = new StringBuilder(string.Format("DELETE FROM {0}", GetTableName(classMap)));
-			sql.Append(" WHERE ").Append(predicate.GetSql(this, parameters));
+			sql.Append(" WHERE ").Append(predicate.GetSql(Context, parameters));
 			return sql.ToString();
 		}
 
@@ -193,8 +195,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return Configuration.Dialect.SupportsMultipleStatements;
 		}
 
-		private string IdentitySql(IClassMapper classMap)
+		public string IdentitySql<T>()
 		{
+			var classMap = _classMapperRepository.GetMap<T>();
+
 			return classMap.IdentitySql(Configuration.Dialect);
 		}
 
