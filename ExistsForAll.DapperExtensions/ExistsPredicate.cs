@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using ExistsForAll.DapperExtensions.Mapper;
+﻿using System.Collections.Generic;
+using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
@@ -9,27 +8,23 @@ namespace ExistsForAll.DapperExtensions
 		where TSub : class
 	{
 		public IPredicate Predicate { get; set; }
+
 		public bool Not { get; set; }
 
-		public string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
+		public string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
 		{
-			var mapSub = GetClassMapper(typeof(TSub), sqlGenerator.Configuration);
-			var sql = string.Format("({0}EXISTS (SELECT 1 FROM {1} WHERE {2}))",
-				Not ? "NOT " : string.Empty,
-				sqlGenerator.GetTableName(mapSub),
-				Predicate.GetSql(sqlGenerator, parameters));
-			return sql;
-		}
+			var classMap = context.ClassMapperRepository.GetMapOrThrow<TSub>();
 
-		protected virtual IClassMapper GetClassMapper(Type type, IDapperExtensionsConfiguration configuration)
-		{
-			IClassMapper map = configuration.GetMap(type);
-			if (map == null)
-			{
-				throw new NullReferenceException(string.Format("Map was not found for {0}", type));
-			}
+			var sql = new StringBuilder();
 
-			return map;
+			sql.Append(Not ? "NOT " : string.Empty)
+				.Append("EXISTS (SELECT 1 FROM ")
+				.Append(classMap.GetTableName(context.Dialect))
+				.Append(" WHERE ")
+				.Append(Predicate.GetSql(context, parameters))
+				.Append("))");
+
+			return sql.ToString();
 		}
 	}
 }

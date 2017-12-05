@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
@@ -12,34 +13,51 @@ namespace ExistsForAll.DapperExtensions
 	{
 		public object Value { get; set; }
 
-		public override string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
+		public override string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
 		{
-			var columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
+			var classMap = context.ClassMapperRepository.GetMapOrThrow<T>();
+
+			var columnName = classMap.GetColumnName(context.Dialect, PropertyName);
+
 			if (Value == null)
-			{
-				return string.Format("({0} IS {1}NULL)", columnName, Not ? "NOT " : string.Empty);
-			}
+				return GetSqlForNull(columnName);
 
 			if (Value is IEnumerable && !(Value is string))
+				return GetSqlForEnumerable(columnName, parameters, context.Dialect);
+
+			return GetSqlFromSingleStringField(columnName, parameters, context.Dialect);
+		}
+
+		private string GetSqlForNull(string columnName)
+		{
+			var isNotString = Not ? "NOT " : string.Empty;
+			return $"({columnName} IS {isNotString}NULL)";
+		}
+
+		private string GetSqlForEnumerable(string columnName, IDictionary<string, object> parameters, ISqlDialect sqlDialect)
+		{
+			if (Operator != Operator.Eq)
+				throw new ArgumentException("Operator must be set to Eq for Enumerable types");
+
+			var @params = new List<string>();
+
+			foreach (var value in (IEnumerable)Value)
 			{
-				if (Operator != Operator.Eq)
-				{
-					throw new ArgumentException("Operator must be set to Eq for Enumerable types");
-				}
-
-				var @params = new List<string>();
-				foreach (var value in (IEnumerable)Value)
-				{
-					var valueParameterName = parameters.SetParameterName(this.PropertyName, value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
-					@params.Add(valueParameterName);
-				}
-
-				var paramStrings = @params.Aggregate(new StringBuilder(), (sb, s) => sb.Append((sb.Length != 0 ? ", " : string.Empty) + s), sb => sb.ToString());
-				return string.Format("({0} {1}IN ({2}))", columnName, Not ? "NOT " : string.Empty, paramStrings);
+				var valueParameterName = parameters.SetParameterName(PropertyName, value, sqlDialect.ParameterPrefix);
+				@params.Add(valueParameterName);
 			}
 
-			var parameterName = parameters.SetParameterName(this.PropertyName, this.Value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
-			return string.Format("({0} {1} {2})", columnName, GetOperatorString(), parameterName);
+			var paramStrings = @params.Aggregate(new StringBuilder(), (sb, s) => sb.Append((sb.Length != 0 ? ", " : string.Empty) + s), sb => sb.ToString());
+
+			var notIn = Not ? "NOT " : string.Empty;
+
+			return $"({columnName} {notIn}IN ({paramStrings}))";
+		}
+
+		private string GetSqlFromSingleStringField(string columnName, IDictionary<string, object> parameters, ISqlDialect sqlDialect)
+		{
+			var parameterName = parameters.SetParameterName(PropertyName, Value, sqlDialect.ParameterPrefix);
+			return $"({columnName} {GetOperatorString()} {parameterName})";
 		}
 	}
 }

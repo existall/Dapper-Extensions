@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
@@ -6,16 +7,31 @@ namespace ExistsForAll.DapperExtensions
 	public class BetweenPredicate<T> : BasePredicate, IBetweenPredicate
 		where T : class
 	{
-		public override string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
-		{
-			var columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
-			var propertyName1 = parameters.SetParameterName(this.PropertyName, this.Value.Value1, sqlGenerator.Configuration.Dialect.ParameterPrefix);
-			var propertyName2 = parameters.SetParameterName(this.PropertyName, this.Value.Value2, sqlGenerator.Configuration.Dialect.ParameterPrefix);
-			return string.Format("({0} {1}BETWEEN {2} AND {3})", columnName, Not ? "NOT " : string.Empty, propertyName1, propertyName2);
-		}
-
 		public BetweenValues Value { get; set; }
 
 		public bool Not { get; set; }
+
+		public override string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
+		{
+			var classMap = context.ClassMapperRepository.GetMapOrThrow<T>();
+
+			var columnName = classMap.GetColumnName(context.Dialect, PropertyName);
+
+			var propertyName1 = parameters.SetParameterName(PropertyName, Value.Value1, context.Dialect.ParameterPrefix);
+
+			var propertyName2 = parameters.SetParameterName(PropertyName, Value.Value2, context.Dialect.ParameterPrefix);
+
+			var sb = new StringBuilder();
+
+			sb.Append(columnName)
+				.Append(" ")
+				.Append(Not ? "NOT " : string.Empty)
+				.Append("BETWEEN ")
+				.Append(propertyName1)
+				.Append(" AND ")
+				.Append(propertyName2);
+
+			return sb.ToString();
+		}
 	}
 }

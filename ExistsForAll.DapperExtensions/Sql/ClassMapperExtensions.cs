@@ -58,5 +58,19 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return classMapper.Properties.Where(p => p.KeyType == KeyType.TriggerIdentity).ToArray();
 		}
 
+		public static string GetColumnName(this IClassMapper classMapper,ISqlDialect sqlDialect ,string propertyName)
+		{
+			var propertyMap = classMapper.GetPropertyMapByName(propertyName);
+
+			if (propertyMap == null)
+				throw new NullReferenceException($"{propertyName} was not found for {classMapper.EntityType}");
+			
+			return classMapper.GetColumnName(propertyMap, sqlDialect, false);
+		}
+
+		public static IPropertyMap GetPropertyMapByName(this IClassMapper classMapper, string propertyName)
+		{
+			return classMapper.Properties.SingleOrDefault(p => p.Name == propertyName);
+		}
 	}
 }

@@ -3,7 +3,7 @@ using ExistsForAll.DapperExtensions.Mapper;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
-	internal interface ISqlGenerator
+	public interface ISqlGenerator
 	{
 		string Select<T>(IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters) where T : IClassMapper;
 		string SelectPaged<T>(IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDictionary<string, object> parameters) where T : IClassMapper;

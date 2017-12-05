@@ -5,6 +5,12 @@ namespace ExistsForAll.DapperExtensions
 {
 	public interface IPredicate
 	{
-		string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters);
+		string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters);
+	}
+
+	public interface ISqlGenerationContext
+	{
+		ISqlDialect  Dialect { get; }
+		IClassMapperRepository ClassMapperRepository { get; }
 	}
 }

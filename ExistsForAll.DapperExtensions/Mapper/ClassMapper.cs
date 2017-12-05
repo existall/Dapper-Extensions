@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -30,7 +29,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// <summary>
         /// A collection of properties that will map to columns in the database table.
         /// </summary>
-        public IList<IPropertyMap> Properties { get; }
+        public IPropertyMapCollection Properties { get; }
 
         public Type EntityType => typeof(T);
 
@@ -50,7 +49,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
                                                  { typeof(Guid), KeyType.Guid }, { typeof(Guid?), KeyType.Guid },
                                              };
 
-            Properties = new List<IPropertyMap>();
+	        Properties = new PropertyMapCollection();
             Table(typeof(T).Name);
         }
 
@@ -126,7 +125,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
         protected PropertyMap Map(PropertyInfo propertyInfo)
         {
             var result = new PropertyMap(propertyInfo);
-            this.GuardForDuplicatePropertyMap(result);
+            GuardForDuplicatePropertyMap(result);
             Properties.Add(result);
             return result;
         }
@@ -138,14 +137,14 @@ namespace ExistsForAll.DapperExtensions.Mapper
         protected void UnMap(Expression<Func<T, object>> expression)
         {
             var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
-            var mapping = this.Properties.Where(w => w.Name == propertyInfo.Name).SingleOrDefault();
+            var mapping = Properties.Where(w => w.Name == propertyInfo.Name).SingleOrDefault();
 
             if (mapping == null)
             {
                 throw new InvalidOperationException("Unable to UnMap because mapping does not exist.");
             }
 
-            this.Properties.Remove(mapping);
+            Properties.Remove(mapping);
         }
 
         private void GuardForDuplicatePropertyMap(PropertyMap result)

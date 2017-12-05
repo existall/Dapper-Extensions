@@ -1,5 +1,3 @@
-using System;
-
 namespace ExistsForAll.DapperExtensions.Mapper
 {
     /// <summary>

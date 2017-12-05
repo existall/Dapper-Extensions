@@ -27,6 +27,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			var sql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
 				GetTableName(classMap)));
+
 			if (predicate != null)
 			{
 				sql.Append(" WHERE ")
