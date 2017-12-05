@@ -24,7 +24,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			var classMap = _classMapperRepository.GetMap<T>();
 
-			StringBuilder sql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
+			var sql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
 				GetTableName(classMap)));
 			if (predicate != null)
@@ -53,7 +53,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			var classMap = _classMapperRepository.GetMap<T>();
 
-			StringBuilder innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
+			var innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
 				GetTableName(classMap)));
 			if (predicate != null)
@@ -62,10 +62,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 					.Append(predicate.GetSql(this, parameters));
 			}
 
-			string orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
+			var orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
 			innerSql.Append(" ORDER BY " + orderBy);
 
-			string sql = Configuration.Dialect.GetPagingSql(innerSql.ToString(), page, resultsPerPage, parameters);
+			var sql = Configuration.Dialect.GetPagingSql(innerSql.ToString(), page, resultsPerPage, parameters);
 			return sql;
 		}
 
@@ -80,7 +80,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			var classMap = _classMapperRepository.GetMap<T>();
 
-			StringBuilder innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
+			var innerSql = new StringBuilder(string.Format("SELECT {0} FROM {1}",
 				BuildSelectColumns(classMap),
 				GetTableName(classMap)));
 			if (predicate != null)
@@ -89,10 +89,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 					.Append(predicate.GetSql(this, parameters));
 			}
 
-			string orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
+			var orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
 			innerSql.Append(" ORDER BY " + orderBy);
 
-			string sql = Configuration.Dialect.GetSetSql(innerSql.ToString(), firstResult, maxResults, parameters);
+			var sql = Configuration.Dialect.GetSetSql(innerSql.ToString(), firstResult, maxResults, parameters);
 			return sql;
 		}
 
@@ -102,7 +102,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			var classMap = _classMapperRepository.GetMap<T>();
 
-			StringBuilder sql = new StringBuilder(string.Format("SELECT COUNT(*) AS {0}Total{1} FROM {2}",
+			var sql = new StringBuilder(string.Format("SELECT COUNT(*) AS {0}Total{1} FROM {2}",
 								Configuration.Dialect.OpenQuote,
 								Configuration.Dialect.CloseQuote,
 								GetTableName(classMap)));
@@ -132,11 +132,11 @@ namespace ExistsForAll.DapperExtensions.Sql
 									   columnNames.AppendStrings(),
 									   parameters.AppendStrings());
 
-			var triggerIdentityColumn = classMap.Properties.Where(p => p.KeyType == KeyType.TriggerIdentity).ToList();
+			var triggerIdentityColumn = classMap.GetTriggerIdentities();
 
-			if (triggerIdentityColumn.Count > 0)
+			if (triggerIdentityColumn.Length > 0)
 			{
-				if (triggerIdentityColumn.Count > 1)
+				if (triggerIdentityColumn.Length > 1)
 					throw new ArgumentException("TriggerIdentity generator cannot be used with multi-column keys");
 
 				sql += string.Format(" RETURNING {0} INTO {1}IdOutParam", triggerIdentityColumn.Select(p => GetColumnName(classMap, p, false)).First(), Configuration.Dialect.ParameterPrefix);
@@ -145,21 +145,18 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql;
 		}
 
-		public virtual string Update(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
+		public string Update<T>(IPredicate predicate,
+			IDictionary<string, object> parameters,
+			bool ignoreAllKeyProperties) where T : IClassMapper
 		{
-			if (predicate == null)
-			{
-				throw new ArgumentNullException("Predicate");
-			}
+			Guard.ArgumentNull(predicate, nameof(predicate));
+			Guard.ArgumentNull(parameters, nameof(parameters));
 
-			if (parameters == null)
-			{
-				throw new ArgumentNullException("Parameters");
-			}
+			var classMap = _classMapperRepository.GetMap<T>();
 
 			var columns = ignoreAllKeyProperties
-				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
-				: classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
+				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey).ToArray()
+				: classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned)).ToArray();
 
 			if (!columns.Any())
 			{
@@ -178,19 +175,14 @@ namespace ExistsForAll.DapperExtensions.Sql
 				predicate.GetSql(this, parameters));
 		}
 
-		public virtual string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
+		public string Delete<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper
 		{
-			if (predicate == null)
-			{
-				throw new ArgumentNullException("Predicate");
-			}
+			Guard.ArgumentNull(predicate, nameof(predicate));
+			Guard.ArgumentNull(parameters, nameof(parameters));
 
-			if (parameters == null)
-			{
-				throw new ArgumentNullException("Parameters");
-			}
+			var classMap = _classMapperRepository.GetMap<T>();
 
-			StringBuilder sql = new StringBuilder(string.Format("DELETE FROM {0}", GetTableName(classMap)));
+			var sql = new StringBuilder(string.Format("DELETE FROM {0}", GetTableName(classMap)));
 			sql.Append(" WHERE ").Append(predicate.GetSql(this, parameters));
 			return sql.ToString();
 		}

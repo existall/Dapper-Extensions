@@ -26,7 +26,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 				throw new ArgumentNullException("TableName", "tableName cannot be null or empty.");
 			}
 
-			StringBuilder result = new StringBuilder();
+			var result = new StringBuilder();
 			if (!string.IsNullOrWhiteSpace(schemaName))
 			{
 				result.AppendFormat(QuoteString(schemaName) + ".");
@@ -48,7 +48,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 				throw new ArgumentNullException("ColumnName", "columnName cannot be null or empty.");
 			}
 
-			StringBuilder result = new StringBuilder();
+			var result = new StringBuilder();
 			if (!string.IsNullOrWhiteSpace(prefix))
 			{
 				result.AppendFormat(QuoteString(prefix) + ".");

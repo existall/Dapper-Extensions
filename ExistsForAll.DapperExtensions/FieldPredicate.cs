@@ -14,7 +14,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public override string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
 		{
-			string columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
+			var columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
 			if (Value == null)
 			{
 				return string.Format("({0} IS {1}NULL)", columnName, Not ? "NOT " : string.Empty);
@@ -27,18 +27,18 @@ namespace ExistsForAll.DapperExtensions
 					throw new ArgumentException("Operator must be set to Eq for Enumerable types");
 				}
 
-				List<string> @params = new List<string>();
+				var @params = new List<string>();
 				foreach (var value in (IEnumerable)Value)
 				{
-					string valueParameterName = parameters.SetParameterName(this.PropertyName, value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
+					var valueParameterName = parameters.SetParameterName(this.PropertyName, value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
 					@params.Add(valueParameterName);
 				}
 
-				string paramStrings = @params.Aggregate(new StringBuilder(), (sb, s) => sb.Append((sb.Length != 0 ? ", " : string.Empty) + s), sb => sb.ToString());
+				var paramStrings = @params.Aggregate(new StringBuilder(), (sb, s) => sb.Append((sb.Length != 0 ? ", " : string.Empty) + s), sb => sb.ToString());
 				return string.Format("({0} {1}IN ({2}))", columnName, Not ? "NOT " : string.Empty, paramStrings);
 			}
 
-			string parameterName = parameters.SetParameterName(this.PropertyName, this.Value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
+			var parameterName = parameters.SetParameterName(this.PropertyName, this.Value, sqlGenerator.Configuration.Dialect.ParameterPrefix);
 			return string.Format("({0} {1} {2})", columnName, GetOperatorString(), parameterName);
 		}
 	}

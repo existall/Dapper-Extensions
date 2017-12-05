@@ -11,8 +11,8 @@ namespace ExistsForAll.DapperExtensions
 
 		public override string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
 		{
-			string columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
-			string columnName2 = GetColumnName(typeof(T2), sqlGenerator, PropertyName2);
+			var columnName = GetColumnName(typeof(T), sqlGenerator, PropertyName);
+			var columnName2 = GetColumnName(typeof(T2), sqlGenerator, PropertyName2);
 			return string.Format("({0} {1} {2})", columnName, GetOperatorString(), columnName2);
 		}
 	}

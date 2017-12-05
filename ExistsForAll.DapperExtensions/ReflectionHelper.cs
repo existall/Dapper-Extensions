@@ -45,8 +45,8 @@ namespace ExistsForAll.DapperExtensions
 						expr = ((UnaryExpression)expr).Operand;
 						break;
 					case ExpressionType.MemberAccess:
-						MemberExpression memberExpression = (MemberExpression)expr;
-						MemberInfo mi = memberExpression.Member;
+						var memberExpression = (MemberExpression)expr;
+						var mi = memberExpression.Member;
 						return mi;
 					default:
 						return null;
@@ -65,8 +65,8 @@ namespace ExistsForAll.DapperExtensions
 
 			foreach (var propertyInfo in obj.GetType().GetProperties())
 			{
-				string name = propertyInfo.Name;
-				object value = propertyInfo.GetValue(obj, null);
+				var name = propertyInfo.Name;
+				var value = propertyInfo.GetValue(obj, null);
 				result[name] = value;
 			}
 
@@ -83,7 +83,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public static bool IsSimpleType(Type type)
 		{
-			Type actualType = type;
+			var actualType = type;
 			if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 			{
 				actualType = type.GetGenericArguments()[0];

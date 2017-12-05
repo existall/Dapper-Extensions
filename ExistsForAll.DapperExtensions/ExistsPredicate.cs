@@ -13,8 +13,8 @@ namespace ExistsForAll.DapperExtensions
 
 		public string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
 		{
-			IClassMapper mapSub = GetClassMapper(typeof(TSub), sqlGenerator.Configuration);
-			string sql = string.Format("({0}EXISTS (SELECT 1 FROM {1} WHERE {2}))",
+			var mapSub = GetClassMapper(typeof(TSub), sqlGenerator.Configuration);
+			var sql = string.Format("({0}EXISTS (SELECT 1 FROM {1} WHERE {2}))",
 				Not ? "NOT " : string.Empty,
 				sqlGenerator.GetTableName(mapSub),
 				Predicate.GetSql(sqlGenerator, parameters));

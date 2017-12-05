@@ -14,7 +14,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public IEnumerable<T> Read<T>()
 		{
-			SqlMapper.GridReader reader = _items.Dequeue();
+			var reader = _items.Dequeue();
 			return reader.Read<T>();
 		}
 	}

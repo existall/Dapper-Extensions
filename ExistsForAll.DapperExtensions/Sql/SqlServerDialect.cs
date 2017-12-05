@@ -18,7 +18,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
         public override string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters)
         {
-            int startValue = (page * resultsPerPage) + 1;
+            var startValue = (page * resultsPerPage) + 1;
             return GetSetSql(sql, startValue, resultsPerPage, parameters);
         }
 
@@ -34,20 +34,20 @@ namespace ExistsForAll.DapperExtensions.Sql
                 throw new ArgumentNullException("Parameters");
             }
 
-            int selectIndex = GetSelectEnd(sql) + 1;
-            string orderByClause = GetOrderByClause(sql);
+            var selectIndex = GetSelectEnd(sql) + 1;
+            var orderByClause = GetOrderByClause(sql);
             if (orderByClause == null)
             {
                 orderByClause = "ORDER BY CURRENT_TIMESTAMP";
             }
 
 
-            string projectedColumns = GetColumnNames(sql).Aggregate(new StringBuilder(), (sb, s) => (sb.Length == 0 ? sb : sb.Append(", ")).Append(GetColumnName("_proj", s, null)), sb => sb.ToString());
-            string newSql = sql
+            var projectedColumns = GetColumnNames(sql).Aggregate(new StringBuilder(), (sb, s) => (sb.Length == 0 ? sb : sb.Append(", ")).Append(GetColumnName("_proj", s, null)), sb => sb.ToString());
+            var newSql = sql
                 .Replace(" " + orderByClause, string.Empty)
                 .Insert(selectIndex, string.Format("ROW_NUMBER() OVER(ORDER BY {0}) AS {1}, ", orderByClause.Substring(9), GetColumnName(null, "_row_number", null)));
 
-            string result = string.Format("SELECT TOP({0}) {1} FROM ({2}) [_proj] WHERE {3} >= @_pageStartRow ORDER BY {3}",
+            var result = string.Format("SELECT TOP({0}) {1} FROM ({2}) [_proj] WHERE {3} >= @_pageStartRow ORDER BY {3}",
                 maxResults, projectedColumns.Trim(), newSql, GetColumnName("_proj", "_row_number", null));
 
             parameters.Add("@_pageStartRow", firstResult);
@@ -56,15 +56,15 @@ namespace ExistsForAll.DapperExtensions.Sql
 
         protected string GetOrderByClause(string sql)
         {
-            int orderByIndex = sql.LastIndexOf(" ORDER BY ", StringComparison.OrdinalIgnoreCase);
+            var orderByIndex = sql.LastIndexOf(" ORDER BY ", StringComparison.OrdinalIgnoreCase);
             if (orderByIndex == -1)
             {
                 return null;
             }
 
-            string result = sql.Substring(orderByIndex).Trim();
+            var result = sql.Substring(orderByIndex).Trim();
 
-            int whereIndex = result.IndexOf(" WHERE ", StringComparison.OrdinalIgnoreCase);
+            var whereIndex = result.IndexOf(" WHERE ", StringComparison.OrdinalIgnoreCase);
             if (whereIndex == -1)
             {
                 return result;
@@ -75,9 +75,9 @@ namespace ExistsForAll.DapperExtensions.Sql
 
         protected int GetFromStart(string sql)
         {
-            int selectCount = 0;
-            string[] words = sql.Split(' ');
-            int fromIndex = 0;
+            var selectCount = 0;
+            var words = sql.Split(' ');
+            var fromIndex = 0;
             foreach (var word in words)
             {
                 if (word.Equals("SELECT", StringComparison.OrdinalIgnoreCase))
@@ -117,20 +117,20 @@ namespace ExistsForAll.DapperExtensions.Sql
 
         protected virtual IList<string> GetColumnNames(string sql)
         {
-            int start = GetSelectEnd(sql);
-            int stop = GetFromStart(sql);
-            string[] columnSql = sql.Substring(start, stop - start).Split(',');
-            List<string> result = new List<string>();
-            foreach (string c in columnSql)
+            var start = GetSelectEnd(sql);
+            var stop = GetFromStart(sql);
+            var columnSql = sql.Substring(start, stop - start).Split(',');
+            var result = new List<string>();
+            foreach (var c in columnSql)
             {
-                int index = c.IndexOf(" AS ", StringComparison.OrdinalIgnoreCase);
+                var index = c.IndexOf(" AS ", StringComparison.OrdinalIgnoreCase);
                 if (index > 0)
                 {
                     result.Add(c.Substring(index + 4).Trim());
                     continue;
                 }
 
-                string[] colParts = c.Split('.');
+                var colParts = c.Split('.');
                 result.Add(colParts[colParts.Length - 1].Trim());
             }
 

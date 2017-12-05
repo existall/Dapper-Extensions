@@ -15,13 +15,13 @@ namespace ExistsForAll.DapperExtensions.Sql
 
         public override string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters)
         {            
-            int startValue = page * resultsPerPage;
+            var startValue = page * resultsPerPage;
             return GetSetSql(sql, startValue, resultsPerPage, parameters);
         }
 
         public override string GetSetSql(string sql, int firstResult, int maxResults, IDictionary<string, object> parameters)
         {
-            string result = string.Format("{0} LIMIT @firstResult, @maxResults", sql);
+            var result = string.Format("{0} LIMIT @firstResult, @maxResults", sql);
             parameters.Add("@firstResult", firstResult);
             parameters.Add("@maxResults", maxResults);
             return result;

@@ -14,7 +14,7 @@ namespace ExistsForAll.DapperExtensions
 		public IList<IPredicate> Predicates { get; set; }
 		public string GetSql(ISqlGenerator sqlGenerator, IDictionary<string, object> parameters)
 		{
-			string seperator = Operator == GroupOperator.And ? " AND " : " OR ";
+			var seperator = Operator == GroupOperator.And ? " AND " : " OR ";
 			return "(" + Predicates.Aggregate(new StringBuilder(),
 				       (sb, p) => (sb.Length == 0 ? sb : sb.Append(seperator)).Append(p.GetSql(sqlGenerator, parameters)),
 				       sb =>

@@ -29,7 +29,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		public static string GetColumnName(this IClassMapper map, ISqlDialect sqlDialect, string propertyName, bool includeAlias)
 		{
-			IPropertyMap propertyMap = map.Properties.SingleOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
+			var propertyMap = map.Properties.SingleOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 			if (propertyMap == null)
 			{
 				throw new ArgumentException(string.Format("Could not find '{0}' in Mapping.", propertyName));
@@ -53,9 +53,9 @@ namespace ExistsForAll.DapperExtensions.Sql
 				.ToArray();
 		}
 
-		public static IPropertyMap[] GetTriggeredIds(this IClassMapper classMapper)
+		public static IPropertyMap[] GetTriggerIdentities(this IClassMapper classMapper)
 		{
-			classMap.Properties.Where(p => p.KeyType == KeyType.TriggerIdentity).ToList();
+			return classMapper.Properties.Where(p => p.KeyType == KeyType.TriggerIdentity).ToArray();
 		}
 
 	}

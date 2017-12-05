@@ -9,7 +9,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
     {
         public AutoClassMapper()
         {
-            Type type = typeof(T);
+            var type = typeof(T);
             Table(type.Name);
             AutoMap();
         }

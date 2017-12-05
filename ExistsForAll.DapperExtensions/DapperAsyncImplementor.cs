@@ -65,7 +65,7 @@ namespace ExistsForAll.DapperExtensions
                 }
             }
 
-            string sql = SqlGenerator.Insert(classMap);
+            var sql = SqlGenerator.Insert(classMap);
 
             if (triggerIdentityColumn == null)
             {
@@ -82,7 +82,7 @@ namespace ExistsForAll.DapperExtensions
         public async Task<dynamic> InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            List<IPropertyMap> nonIdentityKeyProperties = classMap.Properties.Where(p => p.KeyType == KeyType.Guid || p.KeyType == KeyType.Assigned).ToList();
+            var nonIdentityKeyProperties = classMap.Properties.Where(p => p.KeyType == KeyType.Guid || p.KeyType == KeyType.Assigned).ToList();
             var identityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.Identity);
             var triggerIdentityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
             foreach (var column in nonIdentityKeyProperties)
@@ -95,7 +95,7 @@ namespace ExistsForAll.DapperExtensions
             }
 
             IDictionary<string, object> keyValues = new ExpandoObject();
-            string sql = SqlGenerator.Insert(classMap);
+            var sql = SqlGenerator.Insert(classMap);
             if (identityColumn != null)
             {
                 IEnumerable<long> result;
@@ -111,8 +111,8 @@ namespace ExistsForAll.DapperExtensions
                     result = connection.Query<long>(sql, entity, transaction, false, commandTimeout, CommandType.Text);
                 }
 
-                long identityValue = result.First();
-                int identityInt = Convert.ToInt32(identityValue);
+                var identityValue = result.First();
+                var identityInt = Convert.ToInt32(identityValue);
                 keyValues.Add(identityColumn.Name, identityInt);
                 identityColumn.PropertyInfo.SetValue(entity, identityInt, null);
             }
@@ -226,7 +226,7 @@ namespace ExistsForAll.DapperExtensions
             IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
+            var wherePredicate = GetPredicate(classMap, predicate);
             return await GetListAsync<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout);
         }
 
@@ -237,7 +237,7 @@ namespace ExistsForAll.DapperExtensions
             int resultsPerPage = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
+            var wherePredicate = GetPredicate(classMap, predicate);
             return await GetPageAsync<T>(connection, classMap, wherePredicate, sort, page, resultsPerPage, transaction, commandTimeout);
         }
 
@@ -248,7 +248,7 @@ namespace ExistsForAll.DapperExtensions
             int maxResults = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
+            var wherePredicate = GetPredicate(classMap, predicate);
             return await GetSetAsync<T>(connection, classMap, wherePredicate, sort, firstResult, maxResults, transaction, commandTimeout);
         }
 
@@ -259,10 +259,10 @@ namespace ExistsForAll.DapperExtensions
             int? commandTimeout = null) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Count(classMap, wherePredicate, parameters);
-            DynamicParameters dynamicParameters = new DynamicParameters();
+            var wherePredicate = GetPredicate(classMap, predicate);
+            var parameters = new Dictionary<string, object>();
+            var sql = SqlGenerator.Count(classMap, wherePredicate, parameters);
+            var dynamicParameters = new DynamicParameters();
             foreach (var parameter in parameters)
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
@@ -280,9 +280,9 @@ namespace ExistsForAll.DapperExtensions
         /// </summary>
         protected async Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Select(classMap, predicate, sort, parameters);
-            DynamicParameters dynamicParameters = new DynamicParameters();
+            var parameters = new Dictionary<string, object>();
+            var sql = SqlGenerator.Select(classMap, predicate, sort, parameters);
+            var dynamicParameters = new DynamicParameters();
             foreach (var parameter in parameters)
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
@@ -296,9 +296,9 @@ namespace ExistsForAll.DapperExtensions
         /// </summary>
         protected async Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDbTransaction transaction, int? commandTimeout) where T : class
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.SelectPaged(classMap, predicate, sort, page, resultsPerPage, parameters);
-            DynamicParameters dynamicParameters = new DynamicParameters();
+            var parameters = new Dictionary<string, object>();
+            var sql = SqlGenerator.SelectPaged(classMap, predicate, sort, page, resultsPerPage, parameters);
+            var dynamicParameters = new DynamicParameters();
             foreach (var parameter in parameters)
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
@@ -312,9 +312,9 @@ namespace ExistsForAll.DapperExtensions
         /// </summary>
         protected async Task<IEnumerable<T>> GetSetAsync<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int firstResult, int maxResults, IDbTransaction transaction, int? commandTimeout) where T : class
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.SelectSet(classMap, predicate, sort, firstResult, maxResults, parameters);
-            DynamicParameters dynamicParameters = new DynamicParameters();
+            var parameters = new Dictionary<string, object>();
+            var sql = SqlGenerator.SelectSet(classMap, predicate, sort, firstResult, maxResults, parameters);
+            var dynamicParameters = new DynamicParameters();
             foreach (var parameter in parameters)
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);

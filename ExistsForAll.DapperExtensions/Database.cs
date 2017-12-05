@@ -81,7 +81,7 @@ namespace ExistsForAll.DapperExtensions
 			BeginTransaction();
 			try
 			{
-				T result = func();
+				var result = func();
 				Commit();
 				return result;
 			}

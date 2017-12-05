@@ -73,8 +73,8 @@ namespace ExistsForAll.DapperExtensions.Mapper
 
         protected virtual void AutoMap(Func<Type, PropertyInfo, bool> canMap)
         {
-            Type type = typeof(T);
-            bool hasDefinedKey = Properties.Any(p => p.KeyType != KeyType.NotAKey);
+            var type = typeof(T);
+            var hasDefinedKey = Properties.Any(p => p.KeyType != KeyType.NotAKey);
             PropertyMap keyMap = null;
             foreach (var propertyInfo in type.GetProperties())
             {
@@ -88,7 +88,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
                     continue;
                 }
 
-                PropertyMap map = Map(propertyInfo);
+                var map = Map(propertyInfo);
                 if (!hasDefinedKey)
                 {
                     if (string.Equals(map.PropertyInfo.Name, "id", StringComparison.OrdinalIgnoreCase))
@@ -116,7 +116,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// </summary>
         protected PropertyMap Map(Expression<Func<T, object>> expression)
         {
-            PropertyInfo propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
+            var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
             return Map(propertyInfo);
         }
 
@@ -125,7 +125,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
         /// </summary>
         protected PropertyMap Map(PropertyInfo propertyInfo)
         {
-            PropertyMap result = new PropertyMap(propertyInfo);
+            var result = new PropertyMap(propertyInfo);
             this.GuardForDuplicatePropertyMap(result);
             Properties.Add(result);
             return result;

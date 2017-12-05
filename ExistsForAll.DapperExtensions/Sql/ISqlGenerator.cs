@@ -8,7 +8,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 		string Select<T>(IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters) where T : IClassMapper;
 		string SelectPaged<T>(IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDictionary<string, object> parameters) where T : IClassMapper;
 		string SelectSet<T>(IPredicate predicate, IList<ISort> sort, int firstResult, int maxResults, IDictionary<string, object> parameters) where T : IClassMapper;
-		string Count<T>(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper;
+		string Count<T>(IPredicate predicate, IDictionary<string, object> parameters) where T : IClassMapper;
 
 		string Insert<T>() where T : IClassMapper;
 		string Update<T>(IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties) where T : IClassMapper;
