@@ -145,9 +145,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			Guard.ArgumentNull(predicate, nameof(predicate));
 			Guard.ArgumentNull(parameters, nameof(parameters));
 
-			var columns = ignoreAllKeyProperties
-				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey).ToArray()
-				: classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned)).ToArray();
+			var columns = classMap.GetMutableColumns();
 
 			if (!columns.Any())
 			{
