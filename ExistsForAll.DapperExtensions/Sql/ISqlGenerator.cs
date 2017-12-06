@@ -15,9 +15,6 @@ namespace ExistsForAll.DapperExtensions.Sql
 		string Delete(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
 		string IdentitySql(IClassMapper map);
-		//string GetTableName(IClassMapper map);
-		//string GetColumnName(IClassMapper map, IPropertyMap property, bool includeAlias);
-		//string GetColumnName(IClassMapper map, string propertyName, bool includeAlias);
 		bool SupportsMultipleStatements();
 	}
 }

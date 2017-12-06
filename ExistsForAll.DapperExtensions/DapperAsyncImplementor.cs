@@ -38,11 +38,15 @@ namespace ExistsForAll.DapperExtensions
 		public async Task InsertAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class
 		{
 			IEnumerable<PropertyInfo> properties = null;
-			IClassMapper classMap = ClassMappers.GetMap<T>();
+
+			var classMap = ClassMappers.GetMap<T>();
+
 			var notKeyProperties = classMap.Properties.Where(p => p.KeyType != KeyType.NotAKey);
-			var triggerIdentityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
+
+			var triggerIdentityColumn = classMap.Keys.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
 
 			var parameters = new List<DynamicParameters>();
+
 			if (triggerIdentityColumn != null)
 			{
 				properties = typeof(T).GetProperties(BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.Public)
