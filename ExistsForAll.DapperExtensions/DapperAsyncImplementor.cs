@@ -41,8 +41,10 @@ namespace ExistsForAll.DapperExtensions
 
 			var classMap = ClassMappers.GetMap<T>();
 
-			var notKeyProperties = classMap.Properties.Where(p => p.KeyType != KeyType.NotAKey);
+			var notKeyProperties = classMap.Keys;
 
+
+			// todo: replace this logic
 			var triggerIdentityColumn = classMap.Keys.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
 
 			var parameters = new List<DynamicParameters>();
@@ -178,9 +180,7 @@ namespace ExistsForAll.DapperExtensions
 			var sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
 			var dynamicParameters = new DynamicParameters();
 
-			var columns = ignoreAllKeyProperties
-				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
-				: classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
+			var columns = classMap.GetMutableColumns();
 
 			foreach (var property in XExtensions.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
 			{

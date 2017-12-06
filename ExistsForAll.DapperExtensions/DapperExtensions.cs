@@ -78,7 +78,7 @@ namespace ExistsForAll.DapperExtensions
 
 		static DapperExtensions()
 		{
-			Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());
+			Configure(typeof(ClassMapper<>), new List<Assembly>(), new SqlServerDialect());
 		}
 
 		/// <summary>

@@ -9,7 +9,7 @@ namespace ExistsForAll.DapperExtensions
 	public class DapperExtensionsConfiguration : IDapperExtensionsConfiguration
 	{
 		public DapperExtensionsConfiguration()
-			: this(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect())
+			: this(typeof(ClassMapper<>), new List<Assembly>(), new SqlServerDialect())
 		{
 		}
 

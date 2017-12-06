@@ -201,10 +201,7 @@ namespace ExistsForAll.DapperExtensions
 			var sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
 			var dynamicParameters = new DynamicParameters();
 
-			var columns = ignoreAllKeyProperties
-				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
-				: classMap.Properties.Where(p =>
-					!(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
+			var columns = classMap.GetMutableColumns();
 
 			foreach (var property in XExtensions.GetObjectValues(entity)
 				.Where(property => columns.Any(c => c.Name == property.Key)))
@@ -362,9 +359,13 @@ namespace ExistsForAll.DapperExtensions
 		protected IPredicate GetIdPredicate(IClassMapper classMap, object id)
 		{
 			var isSimpleType = id.GetType().IsSimpleType();
-			var keys = classMap.Properties.Where(p => p.KeyType != KeyType.NotAKey);
+
+			var keys = classMap.Keys;
+
 			IDictionary<string, object> paramValues = null;
+
 			IList<IPredicate> predicates = new List<IPredicate>();
+
 			if (!isSimpleType)
 			{
 				paramValues = XExtensions.GetObjectValues(id);
@@ -399,7 +400,8 @@ namespace ExistsForAll.DapperExtensions
 
 		protected IPredicate GetKeyPredicate<T>(IClassMapper classMap, T entity) where T : class
 		{
-			var whereFields = classMap.Properties.Where(p => p.KeyType != KeyType.NotAKey);
+			var whereFields = classMap.Keys;
+
 			if (!whereFields.Any())
 			{
 				throw new ArgumentException("At least one Key column must be defined.");
