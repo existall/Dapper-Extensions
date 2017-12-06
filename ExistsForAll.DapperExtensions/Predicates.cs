@@ -18,7 +18,7 @@ namespace ExistsForAll.DapperExtensions
 		/// <returns>An instance of IFieldPredicate.</returns>
 		public static IFieldPredicate Field<T>(Expression<Func<T, object>> expression, Operator op, object value, bool not = false) where T : class
 		{
-			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 			return new FieldPredicate<T>
 			{
 				PropertyName = propertyInfo.Name,
@@ -43,8 +43,8 @@ namespace ExistsForAll.DapperExtensions
 			where T : class
 			where T2 : class
 		{
-			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
-			var propertyInfo2 = ReflectionHelper.GetProperty(expression2) as PropertyInfo;
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			var propertyInfo2 = ReflectionHelper<T2>.GetProperty(expression2) as PropertyInfo;
 			return new PropertyPredicate<T, T2>
 			{
 				PropertyName = propertyInfo.Name,
@@ -89,7 +89,7 @@ namespace ExistsForAll.DapperExtensions
 		public static IBetweenPredicate Between<T>(Expression<Func<T, object>> expression, BetweenValues values, bool not = false)
 			where T : class
 		{
-			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 			return new BetweenPredicate<T>
 			{
 				Not = not,
@@ -103,7 +103,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static ISort Sort<T>(Expression<Func<T, object>> expression, bool ascending = true)
 		{
-			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 			return new Sort
 			{
 				PropertyName = propertyInfo.Name,

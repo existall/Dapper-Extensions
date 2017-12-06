@@ -9,28 +9,6 @@ namespace ExistsForAll.DapperExtensions
 {
 	public static class ReflectionHelper<T>
 	{
-		private static List<Type> _simpleTypes = new List<Type>
-							   {
-								   typeof(byte),
-								   typeof(sbyte),
-								   typeof(short),
-								   typeof(ushort),
-								   typeof(int),
-								   typeof(uint),
-								   typeof(long),
-								   typeof(ulong),
-								   typeof(float),
-								   typeof(double),
-								   typeof(decimal),
-								   typeof(bool),
-								   typeof(string),
-								   typeof(char),
-								   typeof(Guid),
-								   typeof(DateTime),
-								   typeof(DateTimeOffset),
-								   typeof(byte[])
-							   };
-
 		public static MemberInfo GetProperty(Expression<Func<T,object>> lambda)
 		{
 			Expression expr = lambda;
@@ -53,6 +31,10 @@ namespace ExistsForAll.DapperExtensions
 				}
 			}
 		}
+	}
+
+	internal static class XExtensions
+	{
 
 		public static IDictionary<string, object> GetObjectValues(object obj)
 		{
@@ -73,7 +55,29 @@ namespace ExistsForAll.DapperExtensions
 			return result;
 		}
 
-		public static bool IsSimpleType(Type type)
+		private static readonly HashSet<Type> SimpleTypes = new HashSet<Type>
+		{
+			typeof(byte),
+			typeof(sbyte),
+			typeof(short),
+			typeof(ushort),
+			typeof(int),
+			typeof(uint),
+			typeof(long),
+			typeof(ulong),
+			typeof(float),
+			typeof(double),
+			typeof(decimal),
+			typeof(bool),
+			typeof(string),
+			typeof(char),
+			typeof(Guid),
+			typeof(DateTime),
+			typeof(DateTimeOffset),
+			typeof(byte[])
+		};
+
+		public static bool IsSimpleType(this Type type)
 		{
 			var actualType = type;
 			if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -81,12 +85,9 @@ namespace ExistsForAll.DapperExtensions
 				actualType = type.GetGenericArguments()[0];
 			}
 
-			return _simpleTypes.Contains(actualType);
+			return SimpleTypes.Contains(actualType);
 		}
-	}
 
-	internal static class XExtensions
-	{
 		public static string GetParameterName(this IDictionary<string, object> parameters, string parameterName, char parameterPrefix)
 		{
 			return String.Format("{0}{1}_{2}", parameterPrefix, parameterName, parameters.Count);

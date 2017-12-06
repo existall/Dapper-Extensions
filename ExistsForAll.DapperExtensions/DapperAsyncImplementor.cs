@@ -14,7 +14,7 @@ namespace ExistsForAll.DapperExtensions
 	public class DapperAsyncImplementor : DapperImplementor, IDapperAsyncImplementor
 	{
 		private ISqlGenerator SqlGenerator { get; }
-		private IClassMapperRepository ClassMapperRepository { get; }
+		private IClassMapperRepository ClassMappers { get; }
 		private IDapperExtensionsConfiguration Configuration { get; }
 
 		/// <summary>
@@ -22,12 +22,12 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		/// <param name="sqlGenerator">The SQL generator.</param>
 		public DapperAsyncImplementor(ISqlGenerator sqlGenerator,
-			IClassMapperRepository classMapperRepository,
+			IClassMapperRepository classMappers,
 			IDapperExtensionsConfiguration dapperExtensionsConfiguration)
-			: base(sqlGenerator, classMapperRepository, dapperExtensionsConfiguration)
+			: base(sqlGenerator, classMappers, dapperExtensionsConfiguration)
 		{
 			SqlGenerator = sqlGenerator;
-			ClassMapperRepository = classMapperRepository;
+			ClassMappers = classMappers;
 			Configuration = dapperExtensionsConfiguration;
 		}
 
@@ -38,7 +38,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task InsertAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class
 		{
 			IEnumerable<PropertyInfo> properties = null;
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var notKeyProperties = classMap.Properties.Where(p => p.KeyType != KeyType.NotAKey);
 			var triggerIdentityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
 
@@ -92,7 +92,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public async Task<dynamic> InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var nonIdentityKeyProperties = classMap.Properties.Where(p => p.KeyType == KeyType.Guid || p.KeyType == KeyType.Assigned).ToList();
 			var identityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.Identity);
 			var triggerIdentityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
@@ -168,7 +168,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public async Task<bool> UpdateAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class
 		{
-			var classMap = ClassMapperRepository.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var predicate = GetKeyPredicate<T>(classMap, entity);
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
@@ -178,7 +178,7 @@ namespace ExistsForAll.DapperExtensions
 				? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
 				: classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
 
-			foreach (var property in ReflectionHelper<T>.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
+			foreach (var property in XExtensions.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
 			{
 				dynamicParameters.Add(property.Key, property.Value);
 			}
@@ -195,7 +195,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public async Task<bool> DeleteAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			var classMap = ClassMapperRepository.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var predicate = GetKeyPredicate(classMap, entity);
 			return await DeleteAsync<T>(connection, classMap, predicate, transaction, commandTimeout);
 		}
@@ -204,7 +204,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public async Task<bool> DeleteAsync<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			var classMap = ClassMapperRepository.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = GetPredicate(classMap, predicate);
 			return await DeleteAsync<T>(connection, classMap, wherePredicate, transaction, commandTimeout);
 		}
@@ -226,7 +226,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<T> GetAsync<T>(IDbConnection connection, dynamic id, IDbTransaction transaction = null,
 			int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			IPredicate predicate = GetIdPredicate(classMap, id);
 			return (await GetListAsync<T>(connection, classMap, predicate, null, transaction, commandTimeout)).SingleOrDefault();
 		}
@@ -237,7 +237,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null,
 			IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = GetPredicate(classMap, predicate);
 			return await GetListAsync<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout);
 		}
@@ -248,7 +248,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int page = 1,
 			int resultsPerPage = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = GetPredicate(classMap, predicate);
 			return await GetPageAsync<T>(connection, classMap, wherePredicate, sort, page, resultsPerPage, transaction, commandTimeout);
 		}
@@ -259,7 +259,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<IEnumerable<T>> GetSetAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int firstResult = 1,
 			int maxResults = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = GetPredicate(classMap, predicate);
 			return await GetSetAsync<T>(connection, classMap, wherePredicate, sort, firstResult, maxResults, transaction, commandTimeout);
 		}
@@ -270,7 +270,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<int> CountAsync<T>(IDbConnection connection, object predicate = null, IDbTransaction transaction = null,
 			int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMapperRepository.GetMap<T>();
+			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = GetPredicate(classMap, predicate);
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Count(classMap, wherePredicate, parameters);

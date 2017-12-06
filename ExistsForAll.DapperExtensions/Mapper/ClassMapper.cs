@@ -8,151 +8,151 @@ using System.Reflection;
 namespace ExistsForAll.DapperExtensions.Mapper
 {
 	public interface IClassMapper<T> : IClassMapper where T : class
-    {
-    }
+	{
+	}
 
-    /// <summary>
-    /// Maps an entity to a table through a collection of property maps.
-    /// </summary>
-    public class ClassMapper<T> : IClassMapper<T> where T : class
-    {
-        /// <summary>
-        /// Gets or sets the schema to use when referring to the corresponding table name in the database.
-        /// </summary>
-        public string SchemaName { get; protected set; }
+	/// <summary>
+	/// Maps an entity to a table through a collection of property maps.
+	/// </summary>
+	public class ClassMapper<T> : IClassMapper<T> where T : class
+	{
+		/// <summary>
+		/// Gets or sets the schema to use when referring to the corresponding table name in the database.
+		/// </summary>
+		public string SchemaName { get; protected set; }
 
-        /// <summary>
-        /// Gets or sets the table to use in the database.
-        /// </summary>
-        public string TableName { get; protected set; }
+		/// <summary>
+		/// Gets or sets the table to use in the database.
+		/// </summary>
+		public string TableName { get; protected set; }
 
-        /// <summary>
-        /// A collection of properties that will map to columns in the database table.
-        /// </summary>
-        public IPropertyMapCollection Properties { get; }
+		/// <summary>
+		/// A collection of properties that will map to columns in the database table.
+		/// </summary>
+		public IPropertyMapCollection Properties { get; }
 
-        public Type EntityType => typeof(T);
+		public Type EntityType => typeof(T);
 
-	    public ClassMapper()
-        {
-            PropertyTypeKeyTypeMapping = new Dictionary<Type, KeyType>
-                                             {
-                                                 { typeof(byte), KeyType.Identity }, { typeof(byte?), KeyType.Identity },
-                                                 { typeof(sbyte), KeyType.Identity }, { typeof(sbyte?), KeyType.Identity },
-                                                 { typeof(short), KeyType.Identity }, { typeof(short?), KeyType.Identity },
-                                                 { typeof(ushort), KeyType.Identity }, { typeof(ushort?), KeyType.Identity },
-                                                 { typeof(int), KeyType.Identity }, { typeof(int?), KeyType.Identity },
-                                                 { typeof(uint), KeyType.Identity}, { typeof(uint?), KeyType.Identity },
-                                                 { typeof(long), KeyType.Identity }, { typeof(long?), KeyType.Identity },
-                                                 { typeof(ulong), KeyType.Identity }, { typeof(ulong?), KeyType.Identity },
-                                                 { typeof(BigInteger), KeyType.Identity }, { typeof(BigInteger?), KeyType.Identity },
-                                                 { typeof(Guid), KeyType.Guid }, { typeof(Guid?), KeyType.Guid },
-                                             };
+		public ClassMapper()
+		{
+			PropertyTypeKeyTypeMapping = new Dictionary<Type, KeyType>
+											 {
+												 { typeof(byte), KeyType.Identity }, { typeof(byte?), KeyType.Identity },
+												 { typeof(sbyte), KeyType.Identity }, { typeof(sbyte?), KeyType.Identity },
+												 { typeof(short), KeyType.Identity }, { typeof(short?), KeyType.Identity },
+												 { typeof(ushort), KeyType.Identity }, { typeof(ushort?), KeyType.Identity },
+												 { typeof(int), KeyType.Identity }, { typeof(int?), KeyType.Identity },
+												 { typeof(uint), KeyType.Identity}, { typeof(uint?), KeyType.Identity },
+												 { typeof(long), KeyType.Identity }, { typeof(long?), KeyType.Identity },
+												 { typeof(ulong), KeyType.Identity }, { typeof(ulong?), KeyType.Identity },
+												 { typeof(BigInteger), KeyType.Identity }, { typeof(BigInteger?), KeyType.Identity },
+												 { typeof(Guid), KeyType.Guid }, { typeof(Guid?), KeyType.Guid },
+											 };
 
-	        Properties = new PropertyMapCollection();
-            Table(typeof(T).Name);
-        }
+			Properties = new PropertyMapCollection();
+			Table(typeof(T).Name);
+		}
 
-        protected Dictionary<Type, KeyType> PropertyTypeKeyTypeMapping { get; }
+		protected Dictionary<Type, KeyType> PropertyTypeKeyTypeMapping { get; }
 
-        public virtual void Schema(string schemaName)
-        {
-            SchemaName = schemaName;
-        }
+		public virtual void Schema(string schemaName)
+		{
+			SchemaName = schemaName;
+		}
 
-        public virtual void Table(string tableName)
-        {
-            TableName = tableName;
-        }
+		public virtual void Table(string tableName)
+		{
+			TableName = tableName;
+		}
 
-        protected virtual void AutoMap()
-        {
-            AutoMap(null);
-        }
+		protected virtual void AutoMap()
+		{
+			AutoMap(null);
+		}
 
-        protected virtual void AutoMap(Func<Type, PropertyInfo, bool> canMap)
-        {
-            var type = typeof(T);
-            var hasDefinedKey = Properties.Any(p => p.KeyType != KeyType.NotAKey);
-            PropertyMap keyMap = null;
-            foreach (var propertyInfo in type.GetProperties())
-            {
-                if (Properties.Any(p => p.Name.Equals(propertyInfo.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    continue;
-                }
+		protected virtual void AutoMap(Func<Type, PropertyInfo, bool> canMap)
+		{
+			var type = typeof(T);
+			var hasDefinedKey = Properties.Any(p => p.KeyType != KeyType.NotAKey);
+			PropertyMap keyMap = null;
+			foreach (var propertyInfo in type.GetProperties())
+			{
+				if (Properties.Any(p => p.Name.Equals(propertyInfo.Name, StringComparison.OrdinalIgnoreCase)))
+				{
+					continue;
+				}
 
-                if ((canMap != null && !canMap(type, propertyInfo)))
-                {
-                    continue;
-                }
+				if ((canMap != null && !canMap(type, propertyInfo)))
+				{
+					continue;
+				}
 
-                var map = Map(propertyInfo);
-                if (!hasDefinedKey)
-                {
-                    if (string.Equals(map.PropertyInfo.Name, "id", StringComparison.OrdinalIgnoreCase))
-                    {
-                        keyMap = map;
-                    }
+				var map = Map(propertyInfo);
+				if (!hasDefinedKey)
+				{
+					if (string.Equals(map.PropertyInfo.Name, "id", StringComparison.OrdinalIgnoreCase))
+					{
+						keyMap = map;
+					}
 
-                    if (keyMap == null && map.PropertyInfo.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase))
-                    {
-                        keyMap = map;
-                    }
-                }
-            }
+					if (keyMap == null && map.PropertyInfo.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase))
+					{
+						keyMap = map;
+					}
+				}
+			}
 
-            if (keyMap != null)
-            {
-                keyMap.Key(PropertyTypeKeyTypeMapping.ContainsKey(keyMap.PropertyInfo.PropertyType)
-                    ? PropertyTypeKeyTypeMapping[keyMap.PropertyInfo.PropertyType]
-                    : KeyType.Assigned);
-            }
-        }
+			if (keyMap != null)
+			{
+				keyMap.Key(PropertyTypeKeyTypeMapping.ContainsKey(keyMap.PropertyInfo.PropertyType)
+					? PropertyTypeKeyTypeMapping[keyMap.PropertyInfo.PropertyType]
+					: KeyType.Assigned);
+			}
+		}
 
-        /// <summary>
-        /// Fluently, maps an entity property to a column
-        /// </summary>
-        protected PropertyMap Map(Expression<Func<T, object>> expression)
-        {
-            var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
-            return Map(propertyInfo);
-        }
+		/// <summary>
+		/// Fluently, maps an entity property to a column
+		/// </summary>
+		protected PropertyMap Map(Expression<Func<T, object>> expression)
+		{
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			return Map(propertyInfo);
+		}
 
-        /// <summary>
-        /// Fluently, maps an entity property to a column
-        /// </summary>
-        protected PropertyMap Map(PropertyInfo propertyInfo)
-        {
-            var result = new PropertyMap(propertyInfo);
-            GuardForDuplicatePropertyMap(result);
-            Properties.Add(result);
-            return result;
-        }
+		/// <summary>
+		/// Fluently, maps an entity property to a column
+		/// </summary>
+		protected PropertyMap Map(PropertyInfo propertyInfo)
+		{
+			var result = new PropertyMap(propertyInfo);
+			GuardForDuplicatePropertyMap(result);
+			Properties.Add(result);
+			return result;
+		}
 
-        /// <summary>
-        /// Removes a propertymap entry
-        /// </summary>
-        /// <param name="expression"></param>
-        protected void UnMap(Expression<Func<T, object>> expression)
-        {
-            var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
-            var mapping = Properties.Where(w => w.Name == propertyInfo.Name).SingleOrDefault();
+		/// <summary>
+		/// Removes a propertymap entry
+		/// </summary>
+		/// <param name="expression"></param>
+		protected void UnMap(Expression<Func<T, object>> expression)
+		{
+			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			var mapping = Properties.SingleOrDefault(w => w.Name == propertyInfo.Name);
 
-            if (mapping == null)
-            {
-                throw new InvalidOperationException("Unable to UnMap because mapping does not exist.");
-            }
+			if (mapping == null)
+			{
+				throw new InvalidOperationException("Unable to UnMap because mapping does not exist.");
+			}
 
-            Properties.Remove(mapping);
-        }
+			Properties.Remove(mapping);
+		}
 
-        private void GuardForDuplicatePropertyMap(PropertyMap result)
-        {
-            if (Properties.Any(p => p.Name.Equals(result.Name)))
-            {
-                throw new ArgumentException(string.Format("Duplicate mapping for property {0} detected.", result.Name));
-            }
-        }
-    }
+		private void GuardForDuplicatePropertyMap(PropertyMap result)
+		{
+			if (Properties.Any(p => p.Name.Equals(result.Name)))
+			{
+				throw new ArgumentException(string.Format("Duplicate mapping for property {0} detected.", result.Name));
+			}
+		}
+	}
 }
