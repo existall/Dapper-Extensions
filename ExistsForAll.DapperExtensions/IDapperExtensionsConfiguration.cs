@@ -11,5 +11,6 @@ namespace ExistsForAll.DapperExtensions
 		IList<Assembly> MappingAssemblies { get; }
 		ISqlDialect Dialect { get; }
 		Guid GetNextGuid();
+		bool AutoPopulateGuidValue { get; set; }
 	}
 }

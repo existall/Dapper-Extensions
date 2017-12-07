@@ -11,7 +11,6 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		string ColumnName { get; }
 		bool Ignored { get; }
 		bool IsReadOnly { get; }
-		KeyType KeyType { get; }
 		PropertyInfo PropertyInfo { get; }
 	}
 }

@@ -18,3 +18,5 @@ packages
 \.vs/DapperExtensions/v15/sqlite3/storage\.ide
 
 /.vs/
+/.vs
+/DapperExtensions.Test.SQLite/.vs/

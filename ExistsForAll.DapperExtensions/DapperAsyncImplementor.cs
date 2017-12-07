@@ -41,8 +41,6 @@ namespace ExistsForAll.DapperExtensions
 
 			var classMap = ClassMappers.GetMap<T>();
 
-			var notKeyProperties = classMap.Keys;
-
 
 			// todo: replace this logic
 			var triggerIdentityColumn = classMap.Keys.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
@@ -57,15 +55,6 @@ namespace ExistsForAll.DapperExtensions
 
 			foreach (var e in entities)
 			{
-				foreach (var column in notKeyProperties)
-				{
-					if (column.KeyType == KeyType.Guid && (Guid)column.PropertyInfo.GetValue(e, null) == Guid.Empty)
-					{
-						Guid comb = Configuration.GetNextGuid();
-						column.PropertyInfo.SetValue(e, comb, null);
-					}
-				}
-
 				if (triggerIdentityColumn != null)
 				{
 					var dynamicParameters = new DynamicParameters();

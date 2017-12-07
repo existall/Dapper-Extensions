@@ -50,7 +50,6 @@ namespace ExistsForAll.DapperExtensions
 			var triggerIdentityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.TriggerIdentity);
 
 			var parameters = new List<DynamicParameters>();
-
 			
 			if (triggerIdentityColumn != null)
 			{

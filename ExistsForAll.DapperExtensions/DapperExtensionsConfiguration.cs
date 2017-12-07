@@ -23,6 +23,7 @@ namespace ExistsForAll.DapperExtensions
 		public Type DefaultMapper { get; }
 		public IList<Assembly> MappingAssemblies { get; }
 		public ISqlDialect Dialect { get; }
+		public bool AutoPopulateGuidValue { get; set; } = false;
 
 		public Guid GetNextGuid()
 		{
@@ -39,5 +40,7 @@ namespace ExistsForAll.DapperExtensions
 			Array.Copy(bytes2, bytes2.Length - 4, b, b.Length - 4, 4);
 			return new Guid(b);
 		}
+
+		
 	}
 }

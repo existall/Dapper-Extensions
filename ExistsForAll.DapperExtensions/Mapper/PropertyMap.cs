@@ -2,15 +2,10 @@
 
 namespace ExistsForAll.DapperExtensions.Mapper
 {
-	internal interface IKeyHolder
-	{
-		KeyType KeyType { get; }
-	}
-
 	/// <summary>
 	/// Maps an entity property to its corresponding column in the database.
 	/// </summary>
-	public class PropertyMap : IPropertyMap , IKeyHolder
+	public class PropertyMap : IPropertyMap
 	{
 		public PropertyMap(PropertyInfo propertyInfo)
 		{
@@ -27,11 +22,6 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// Gets the column name for the current property.
 		/// </summary>
 		public string ColumnName { get; private set; }
-
-		/// <summary>
-		/// Gets the key type for the current property.
-		/// </summary>
-		public KeyType KeyType { get; internal set; }
 
 		/// <summary>
 		/// Gets the ignore status of the current property. If ignored, the current property will not be included in queries.
