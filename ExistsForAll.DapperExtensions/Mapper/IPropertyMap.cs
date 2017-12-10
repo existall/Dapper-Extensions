@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace ExistsForAll.DapperExtensions.Mapper
 {
@@ -11,6 +12,8 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		string ColumnName { get; }
 		bool Ignored { get; }
 		bool IsReadOnly { get; }
+		Func<object,object> Getter { get; }
+		void Setter(object entity, object value);
 		PropertyInfo PropertyInfo { get; }
 	}
 }
