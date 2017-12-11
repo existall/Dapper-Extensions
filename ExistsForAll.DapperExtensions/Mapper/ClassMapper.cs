@@ -85,44 +85,27 @@ namespace ExistsForAll.DapperExtensions.Mapper
 
 		protected IdOptions Key<TOut>(Expression<Func<T, TOut>> expression)
 		{
-			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
-
-			var property = new PropertyMap<T, TOut>(propertyInfo, expression.Compile(), GenerateSetterMethod(expression));
+			var property = (PropertyMap) PropertyMapBuilder.BuildMap(expression);
 			GuardForDuplicatePropertyMap(property);
 			Keys.Add(property);
 			return new IdOptions(property);
 		}
 
-		private static Action<T, TOut> GenerateSetterMethod<TOut>(Expression<Func<T, TOut>> expression)
-		{
-			var memberExpression = (MemberExpression)expression.Body;
-
-			var target = Expression.Parameter(typeof(T), "x");
-			var value = Expression.Parameter(memberExpression.Type, "v");
-
-			var memberProperty = Expression.MakeMemberAccess(target, memberExpression.Member);
-			var assignment = Expression.Assign(memberProperty, value);
-
-			var lambda = Expression.Lambda<Action<T, TOut>>(assignment, target, value);
-			return lambda.Compile();
-		}
-
 		/// <summary>
 		/// Fluently, maps an entity property to a column
 		/// </summary>
-		protected PropertyMap Map<TOut>(Expression<Func<T, TOut>> expression)
+		protected IPropertyMap Map<TOut>(Expression<Func<T, TOut>> expression)
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
-			return Map<TOut>(propertyInfo, expression);
+			return Map(propertyInfo, expression);
 		}
 
 		/// <summary>
 		/// Fluently, maps an entity property to a column
 		/// </summary>
-		protected PropertyMap Map<TOut>(PropertyInfo propertyInfo, Expression<Func<T, TOut>> expression)
+		protected IPropertyMap Map<TOut>(PropertyInfo propertyInfo, Expression<Func<T, TOut>> expression)
 		{
-
-			var result = new PropertyMap<T,TOut>(propertyInfo , expression.Compile(), GenerateSetterMethod<TOut>(expression));
+			var result = PropertyMapBuilder.BuildMap(expression);
 			GuardForDuplicatePropertyMap(result);
 			Properties.Add(result);
 			return result;
@@ -145,11 +128,11 @@ namespace ExistsForAll.DapperExtensions.Mapper
 			Properties.Remove(mapping);
 		}
 
-		private void GuardForDuplicatePropertyMap(PropertyMap result)
+		private void GuardForDuplicatePropertyMap(IPropertyMap result)
 		{
 			if (Properties.Any(p => p.Name.Equals(result.Name)))
 			{
-				throw new ArgumentException(string.Format("Duplicate mapping for property {0} detected.", result.Name));
+				throw new ArgumentException($"Duplicate mapping for property {result.Name} detected.");
 			}
 		}
 	}
