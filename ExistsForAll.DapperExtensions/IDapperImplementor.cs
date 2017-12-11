@@ -5,7 +5,7 @@ namespace ExistsForAll.DapperExtensions
 {
 	public interface IDapperImplementor
 	{
-		T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class;
+		T Get<T>(IDbConnection connection, object id, IDbTransaction transaction, int? commandTimeout) where T : class;
 		void Insert<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout) where T : class;
 		void Insert<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
 		bool Update<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;

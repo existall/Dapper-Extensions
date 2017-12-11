@@ -115,7 +115,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// Removes a propertymap entry
 		/// </summary>
 		/// <param name="expression"></param>
-		protected void UnMap(Expression<Func<T, object>> expression)
+		protected void UnMap<TOut>(Expression<Func<T, TOut>> expression)
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 			var mapping = Properties.SingleOrDefault(w => w.Name == propertyInfo.Name);

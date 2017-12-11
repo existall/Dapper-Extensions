@@ -110,7 +110,7 @@ namespace ExistsForAll.DapperExtensions
 		/// <param name="sqlDialect"></param>
 		public static void Configure(Type defaultMapper, IList<Assembly> mappingAssemblies, ISqlDialect sqlDialect)
 		{
-			Configure(new DapperExtensionsConfiguration(defaultMapper, mappingAssemblies, sqlDialect));
+			//Configure(new DapperExtensionsConfiguration(defaultMapper, mappingAssemblies, sqlDialect));
 		}
 
 		/// <summary>
@@ -231,7 +231,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static Guid GetNextGuid()
 		{
-			return _configuration.GetNextGuid();
+			return _configuration.GuidCreator.GetGuid();
 		}
 	}
 }

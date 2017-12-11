@@ -10,7 +10,7 @@ namespace ExistsForAll.DapperExtensions
 		Type DefaultMapper { get; }
 		IList<Assembly> MappingAssemblies { get; }
 		ISqlDialect Dialect { get; }
-		Guid GetNextGuid();
-		bool AutoPopulateGuidValue { get; set; }
+		IGuidCreator GuidCreator { get; }
+		bool AutoPopulateKeyGuidValue { get; set; }
 	}
 }

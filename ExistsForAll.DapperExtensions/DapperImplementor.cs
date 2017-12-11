@@ -25,10 +25,10 @@ namespace ExistsForAll.DapperExtensions
 
 		private ISqlGenerator SqlGenerator { get; }
 
-		public T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class
+		public T Get<T>(IDbConnection connection, object id, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			IClassMapper classMap = ClassMappers.GetMap<T>();
-			IPredicate predicate = GetIdPredicate(classMap, id);
+			var classMap = ClassMappers.GetMap<T>();
+			var predicate = classMap.GetIdPredicate(id);
 			var result = GetList<T>(connection, classMap, predicate, null, transaction, commandTimeout, true).SingleOrDefault();
 			return result;
 		}
@@ -285,47 +285,7 @@ namespace ExistsForAll.DapperExtensions
 			return wherePredicate;
 		}
 
-		protected IPredicate GetIdPredicate(IClassMapper classMap, object id)
-		{
-			var isSimpleType = id.GetType().IsSimpleType();
-
-			var keys = classMap.Keys;
-
-			IDictionary<string, object> paramValues = null;
-
-			IList<IPredicate> predicates = new List<IPredicate>();
-
-			if (!isSimpleType)
-			{
-				paramValues = XExtensions.GetObjectValues(id);
-			}
-
-			foreach (var key in keys)
-			{
-				var value = id;
-				if (!isSimpleType)
-				{
-					value = paramValues[key.Name];
-				}
-
-				var predicateType = typeof(FieldPredicate<>).MakeGenericType(classMap.EntityType);
-
-				var fieldPredicate = Activator.CreateInstance(predicateType) as IFieldPredicate;
-				fieldPredicate.Not = false;
-				fieldPredicate.Operator = Operator.Eq;
-				fieldPredicate.PropertyName = key.Name;
-				fieldPredicate.Value = value;
-				predicates.Add(fieldPredicate);
-			}
-
-			return predicates.Count == 1
-				? predicates[0]
-				: new PredicateGroup
-				{
-					Operator = GroupOperator.And,
-					Predicates = predicates
-				};
-		}
+		
 
 		protected IPredicate GetKeyPredicate<T>(IClassMapper classMap, T entity) where T : class
 		{
