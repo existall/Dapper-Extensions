@@ -29,8 +29,6 @@ namespace ExistsForAll.DapperExtensions.Mapper
 	/// </summary>
 	public abstract class PropertyMap : IPropertyMap
 	{
-		private readonly Action<object, object> _setter;
-
 		protected PropertyMap(PropertyInfo propertyInfo)
 		{
 			PropertyInfo = propertyInfo;
