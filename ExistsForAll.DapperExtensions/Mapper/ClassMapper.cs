@@ -85,7 +85,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 
 		protected IdOptions Key<TOut>(Expression<Func<T, TOut>> expression)
 		{
-			var property = (PropertyMap) PropertyMapBuilder.BuildMap(expression);
+			var property = (PropertyMap)PropertyMapBuilder.BuildMap(expression);
 			GuardForDuplicatePropertyMap(property);
 			Keys.Add(property);
 			return new IdOptions(property);
@@ -118,19 +118,18 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		protected void UnMap<TOut>(Expression<Func<T, TOut>> expression)
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
-			var mapping = Properties.SingleOrDefault(w => w.Name == propertyInfo.Name);
 
-			if (mapping == null)
+			if (Properties.Names.Contains(propertyInfo.Name))
 			{
 				throw new InvalidOperationException("Unable to UnMap because mapping does not exist.");
 			}
 
-			Properties.Remove(mapping);
+			Properties.Remove(propertyInfo.Name);
 		}
 
 		private void GuardForDuplicatePropertyMap(IPropertyMap result)
 		{
-			if (Properties.Any(p => p.Name.Equals(result.Name)))
+			if (Properties.Names.Contains(result.Name))
 			{
 				throw new ArgumentException($"Duplicate mapping for property {result.Name} detected.");
 			}

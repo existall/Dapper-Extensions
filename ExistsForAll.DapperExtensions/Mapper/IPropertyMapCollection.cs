@@ -1,9 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ExistsForAll.DapperExtensions.Mapper
 {
-	public interface IPropertyMapCollection : IList<IPropertyMap>
+	public interface IPropertyMapCollection : IEnumerable<IPropertyMap>
 	{
+		void Add(IPropertyMap propertyMap);
+		void Remove(IPropertyMap propertyMap);
+		void Remove(string name);
+		IPropertyMap GetByName(string name);
+		IEnumerable<string> Names { get; }
 	}
 }
