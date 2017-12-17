@@ -63,7 +63,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public static string GetParameterName(this IDictionary<string, object> parameters, string parameterName, char parameterPrefix)
 		{
-			return String.Format("{0}{1}_{2}", parameterPrefix, parameterName, parameters.Count);
+			return $"{parameterPrefix}{parameterName}_{parameters.Count}";
 		}
 
 		public static string SetParameterName(this IDictionary<string, object> parameters, string parameterName, object value, char parameterPrefix)
@@ -73,11 +73,11 @@ namespace ExistsForAll.DapperExtensions
 			return name;
 		}
 
-		public static string AppendStrings(this IEnumerable<string> list, string seperator = ", ")
+		public static string AppendStrings(this IEnumerable<string> list, string separator = ", ")
 		{
 			return list.Aggregate(
 				new StringBuilder(),
-				(sb, s) => (sb.Length == 0 ? sb : sb.Append(seperator)).Append(s),
+				(sb, s) => (sb.Length == 0 ? sb : sb.Append(separator)).Append(s),
 				sb => sb.ToString());
 		}
 	}

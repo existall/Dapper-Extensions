@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  postgres:
+
+    build:
+        context: ./
+        dockerfile: ./Dockerfile
+    ports:
+     - "5432:5432"
+    environment:
+     - PGDATA=/var/lib/postgresql/data
+     - POSTGRES_PASSWORD=password
+    volumes:
+     - pgdata:/var/lib/postgresql/data
+#     - D:/Installations/Dev/LatestDB:/var/LatestDB
+
+volumes:
+  pgdata:
+    driver: local
+    
+#  tomcat_logs_data:
+#    driver: local
+
+#  app_data:
+#    driver: local
+
+#  app_assets_data:
+#    driver: local

@@ -216,11 +216,17 @@ namespace ExistsForAll.DapperExtensions
 			return GetMultipleBySequence(connection, predicate, transaction, commandTimeout);
 		}
 
-		protected IEnumerable<T> GetList<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate,
-			IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
+		protected IEnumerable<T> GetList<T>(IDbConnection connection,
+			IClassMapper classMap,
+			IPredicate predicate,
+			IList<ISort> sort,
+			IDbTransaction transaction,
+			int? commandTimeout,
+			bool buffered) where T : class
 		{
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Select(classMap, predicate, sort, parameters);
+
 			var dynamicParameters = new DynamicParameters();
 			foreach (var parameter in parameters)
 			{
