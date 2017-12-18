@@ -104,7 +104,7 @@ namespace ExistsForAll.DapperExtensions
 				IEnumerable<long> result;
 				if (SqlGenerator.SupportsMultipleStatements())
 				{
-					sql += Configuration.Dialect.BatchSeperator + SqlGenerator.IdentitySql(classMap);
+					sql += Configuration.Dialect.BatchSeparator + SqlGenerator.IdentitySql(classMap);
 					result = connection.Query<long>(sql, entity, transaction, false, commandTimeout, CommandType.Text);
 				}
 				else
@@ -225,9 +225,11 @@ namespace ExistsForAll.DapperExtensions
 			bool buffered) where T : class
 		{
 			var parameters = new Dictionary<string, object>();
+
 			var sql = SqlGenerator.Select(classMap, predicate, sort, parameters);
 
 			var dynamicParameters = new DynamicParameters();
+
 			foreach (var parameter in parameters)
 			{
 				dynamicParameters.Add(parameter.Key, parameter.Value);
@@ -358,7 +360,7 @@ namespace ExistsForAll.DapperExtensions
 				}
 
 				sql.AppendLine(SqlGenerator.Select(classMap, itemPredicate, item.Sort, parameters) +
-							   Configuration.Dialect.BatchSeperator);
+							   Configuration.Dialect.BatchSeparator);
 			}
 
 			var dynamicParameters = new DynamicParameters();

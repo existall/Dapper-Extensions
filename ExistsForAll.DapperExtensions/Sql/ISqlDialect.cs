@@ -6,7 +6,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 	{
 		char OpenQuote { get; }
 		char CloseQuote { get; }
-		string BatchSeperator { get; }
+		string BatchSeparator { get; }
 		bool SupportsMultipleStatements { get; }
 		char ParameterPrefix { get; }
 		string EmptyExpression { get; }

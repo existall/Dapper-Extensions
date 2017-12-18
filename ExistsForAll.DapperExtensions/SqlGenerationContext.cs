@@ -1,16 +1,17 @@
-﻿using ExistsForAll.DapperExtensions.Sql;
+﻿using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
 {
 	internal struct SqlGenerationContext : ISqlGenerationContext
 	{
 		public ISqlDialect Dialect { get; }
-		public IClassMapperRepository ClassMapperRepository { get; }
+		public IClassMapper ClassMap { get; }
 
-		public SqlGenerationContext(ISqlDialect dialect, IClassMapperRepository classMapperRepository)
+		public SqlGenerationContext(ISqlDialect dialect, IClassMapper classMap)
 		{
 			Dialect = dialect;
-			ClassMapperRepository = classMapperRepository;
+			ClassMap = classMap;
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		public virtual char CloseQuote => '"';
 
-		public virtual string BatchSeperator => ";" + Environment.NewLine;
+		public virtual string BatchSeparator => ";" + Environment.NewLine;
 
 		public virtual bool SupportsMultipleStatements => true;
 
@@ -44,9 +44,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 		public virtual string GetColumnName(string prefix, string columnName, string alias)
 		{
 			if (string.IsNullOrWhiteSpace(columnName))
-			{
-				throw new ArgumentNullException("ColumnName", "columnName cannot be null or empty.");
-			}
+				throw new ArgumentNullException(nameof(columnName), "columnName cannot be null or empty.");
 
 			var result = new StringBuilder();
 			if (!string.IsNullOrWhiteSpace(prefix))

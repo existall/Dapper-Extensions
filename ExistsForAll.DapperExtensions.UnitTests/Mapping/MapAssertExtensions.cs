@@ -12,14 +12,14 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression);
 
-			return target.Properties.Count(x => x.Name == propertyInfo.Name) == 1;
+			return target.Properties.Names.Contains(propertyInfo.Name);
 		}
 
 		public static bool KeyExists<T>(this ClassMapper<T> target, Expression<Func<T, object>> expression) where T : class
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression);
 
-			return target.Keys.Count(x => x.Name == propertyInfo.Name) == 1;
+			return target.Keys.Names.Contains(propertyInfo.Name);
 		}
 	}
 }

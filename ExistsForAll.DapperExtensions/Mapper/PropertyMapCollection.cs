@@ -28,11 +28,11 @@ namespace ExistsForAll.DapperExtensions.Mapper
 			_index.Remove(name);
 		}
 
-		public IPropertyMap GetByName(string name)
+		public IPropertyMap GetByName(string name, bool throwOnMissing)
 		{
 			Guard.ArgumentNull(name, nameof(name));
 
-			if (!_index.TryGetValue(name, out var propertyMap))
+			if (!_index.TryGetValue(name, out var propertyMap) && throwOnMissing)
 				throw new PropertyMapNotFoundException(name);
 			
 			return propertyMap;

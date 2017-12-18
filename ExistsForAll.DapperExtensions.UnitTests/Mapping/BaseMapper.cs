@@ -2,9 +2,9 @@
 
 namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 {
-	public class BaseMappper<T> : ClassMapper<Entity<T>>
+	public class BaseMapper<T> : ClassMapper<Entity<T>>
 	{
-		public BaseMappper()
+		public BaseMapper()
 		{
 			Map(x => x.String);
 			Map(x => x.DateTime);

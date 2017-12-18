@@ -1,10 +1,11 @@
-﻿using ExistsForAll.DapperExtensions.Sql;
+﻿using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
 {
 	public interface ISqlGenerationContext
 	{
 		ISqlDialect  Dialect { get; }
-		IClassMapperRepository ClassMapperRepository { get; }
+		IClassMapper ClassMap { get; }
 	}
 }

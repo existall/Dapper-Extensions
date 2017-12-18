@@ -108,7 +108,7 @@ namespace ExistsForAll.DapperExtensions
 				IEnumerable<long> result;
 				if (SqlGenerator.SupportsMultipleStatements())
 				{
-					sql += Configuration.Dialect.BatchSeperator + SqlGenerator.IdentitySql(classMap);
+					sql += Configuration.Dialect.BatchSeparator + SqlGenerator.IdentitySql(classMap);
 					result = connection.Query<long>(sql, entity, transaction, false, commandTimeout, CommandType.Text);
 				}
 				else

@@ -14,7 +14,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public override string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
 		{
-			var classMap = context.ClassMapperRepository.GetMapOrThrow<T>();
+			var classMap = context.ClassMap;
 
 			var columnName = classMap.GetColumnName(context.Dialect, PropertyName);
 

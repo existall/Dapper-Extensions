@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExistsForAll.DapperExtensions.Mapper;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Mapper
 {
 	public interface IClassMapperRepository
 	{

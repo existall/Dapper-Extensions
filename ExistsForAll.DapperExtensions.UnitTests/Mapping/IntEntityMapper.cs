@@ -1,6 +1,6 @@
 namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 {
-	public class IntEntityMapper : BaseMappper<IntEntity>
+	public class IntEntityMapper : BaseMapper<IntEntity>
 	{
 		public IntEntityMapper()
 		{

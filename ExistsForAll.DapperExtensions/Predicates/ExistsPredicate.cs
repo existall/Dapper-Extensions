@@ -13,7 +13,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public string GetSql(ISqlGenerationContext context, IDictionary<string, object> parameters)
 		{
-			var classMap = context.ClassMapperRepository.GetMapOrThrow<TSub>();
+			var classMap = context.ClassMap;
 
 			var sql = new StringBuilder();
 

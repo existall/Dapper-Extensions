@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ExistsForAll.DapperExtensions.Mapper;
 using Xunit;
 
 namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
@@ -26,7 +26,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 		{
 			var target = new IntEntityClassMapper();
 
-			Assert.Throws<InvalidOperationException>(() => target.UnMap(p => p.String));
+			Assert.Throws<PropertyMapNotFoundException>(() => target.UnMap(p => p.String));
 		}
 	}
 }

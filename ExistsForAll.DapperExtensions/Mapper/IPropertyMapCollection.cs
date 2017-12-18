@@ -7,7 +7,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		void Add(IPropertyMap propertyMap);
 		void Remove(IPropertyMap propertyMap);
 		void Remove(string name);
-		IPropertyMap GetByName(string name);
+		IPropertyMap GetByName(string name, bool throwOnMissing = true);
 		IEnumerable<string> Names { get; }
 	}
 }

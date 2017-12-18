@@ -39,13 +39,13 @@ namespace ExistsForAll.DapperExtensions
 		/// <param name="expression2">An expression that returns the right operand [FieldName2].</param>
 		/// <param name="not">Effectively inverts the comparison operator. Example: WHERE FirstName &lt;&gt; LastName </param>
 		/// <returns>An instance of IPropertyPredicate.</returns>
-		public static IPropertyPredicate Property<T, T2>(Expression<Func<T, object>> expression, Operator op, Expression<Func<T2, object>> expression2, bool not = false)
+		public static IPropertyPredicate Property<T>(Expression<Func<T, object>> expression, Operator op, Expression<Func<T, object>> expression2, bool not = false)
 			where T : class
-			where T2 : class
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
-			var propertyInfo2 = ReflectionHelper<T2>.GetProperty(expression2) as PropertyInfo;
-			return new PropertyPredicate<T, T2>
+			var propertyInfo2 = ReflectionHelper<T>.GetProperty(expression2) as PropertyInfo;
+
+			return new PropertyPredicate
 			{
 				PropertyName = propertyInfo.Name,
 				PropertyName2 = propertyInfo2.Name,

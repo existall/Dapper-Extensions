@@ -119,11 +119,9 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 
-			if (Properties.Names.Contains(propertyInfo.Name))
-			{
-				throw new InvalidOperationException("Unable to UnMap because mapping does not exist.");
-			}
-
+			if (!Properties.Names.Contains(propertyInfo.Name))
+				throw new PropertyMapNotFoundException(propertyInfo.Name);
+			
 			Properties.Remove(propertyInfo.Name);
 		}
 
