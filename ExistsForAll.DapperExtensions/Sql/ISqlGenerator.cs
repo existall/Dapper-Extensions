@@ -11,8 +11,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 		string Count(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
 		string Insert(IClassMapper map);
-		string InsertBatch(IClassMapper map);
-		string Update(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+		string Update(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 		string Delete(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
 		string IdentitySql(IClassMapper map);

@@ -55,7 +55,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		public static IPropertyMap GetPropertyMapByName(this IClassMapper classMapper, string propertyName)
 		{
-			return classMapper.Properties.GetByName(propertyName);
+			return classMapper.GetJoinedMapByName(propertyName);
 		}
 
 		public static IPropertyMap GetKeyMapByName(this IClassMapper classMapper, string propertyName)
