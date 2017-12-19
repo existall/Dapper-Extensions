@@ -13,6 +13,7 @@ namespace ExistsForAll.DapperExtensions
 	{
 		private IClassMapperRepository ClassMappers { get; }
 		private IDapperExtensionsConfiguration Configuration { get; }
+		private ISqlGenerator SqlGenerator { get; }
 
 		public DapperImplementor(ISqlGenerator sqlGenerator,
 			IClassMapperRepository classMappers,
@@ -22,8 +23,6 @@ namespace ExistsForAll.DapperExtensions
 			Configuration = dapperExtensionsConfiguration;
 			SqlGenerator = sqlGenerator;
 		}
-
-		private ISqlGenerator SqlGenerator { get; }
 
 		public T Get<T>(IDbConnection connection, object id, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
@@ -137,7 +136,7 @@ namespace ExistsForAll.DapperExtensions
 		public bool Update<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
 			var classMap = ClassMappers.GetMap<T>();
-			var predicate = GetKeyPredicate<T>(classMap, entity);
+			var predicate = classMap.GetKeyPredicate(entity);
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Update(classMap, predicate, parameters);
 			var dynamicParameters = new DynamicParameters();
@@ -162,7 +161,7 @@ namespace ExistsForAll.DapperExtensions
 			where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var predicate = GetKeyPredicate<T>(classMap, entity);
+			var predicate = classMap.GetKeyPredicate(entity);
 			return Delete<T>(connection, classMap, predicate, transaction, commandTimeout);
 		}
 
@@ -170,7 +169,7 @@ namespace ExistsForAll.DapperExtensions
 			where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = GetPredicate(classMap, predicate);
+			var wherePredicate = classMap.GetPredicate(predicate);
 			return Delete<T>(connection, classMap, wherePredicate, transaction, commandTimeout);
 		}
 
@@ -178,7 +177,7 @@ namespace ExistsForAll.DapperExtensions
 			IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = GetPredicate(classMap, predicate);
+			var wherePredicate = classMap.GetPredicate(predicate);
 			return GetList<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, buffered);
 		}
 
@@ -186,7 +185,7 @@ namespace ExistsForAll.DapperExtensions
 			int resultsPerPage, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = GetPredicate(classMap, predicate);
+			var wherePredicate = classMap.GetPredicate(predicate);
 			return GetPage<T>(connection, classMap, wherePredicate, sort, page, resultsPerPage, transaction, commandTimeout,
 				buffered);
 		}
@@ -195,7 +194,7 @@ namespace ExistsForAll.DapperExtensions
 			int maxResults, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = GetPredicate(classMap, predicate);
+			var wherePredicate = classMap.GetPredicate(predicate);
 			return GetSet<T>(connection, classMap, wherePredicate, sort, firstResult, maxResults, transaction, commandTimeout,
 				buffered);
 		}
@@ -204,7 +203,7 @@ namespace ExistsForAll.DapperExtensions
 			where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = GetPredicate(classMap, predicate);
+			var wherePredicate = classMap.GetPredicate(predicate);
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Count(classMap, wherePredicate, parameters);
 			var dynamicParameters = new DynamicParameters();
@@ -294,69 +293,6 @@ namespace ExistsForAll.DapperExtensions
 			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
-		protected IPredicate GetPredicate(IClassMapper classMap, object predicate)
-		{
-			var wherePredicate = predicate as IPredicate;
-			if (wherePredicate == null && predicate != null)
-			{
-				wherePredicate = GetEntityPredicate(classMap, predicate);
-			}
-
-			return wherePredicate;
-		}
-
-
-
-		protected IPredicate GetKeyPredicate<T>(IClassMapper classMap, T entity) where T : class
-		{
-			var whereFields = classMap.Keys;
-
-			if (!whereFields.Any())
-			{
-				throw new ArgumentException("At least one Key column must be defined.");
-			}
-
-			IList<IPredicate> predicates = (from field in whereFields
-											select new FieldPredicate<T>
-											{
-												Not = false,
-												Operator = Operator.Eq,
-												PropertyName = field.Name,
-												Value = field.PropertyInfo.GetValue(entity, null)
-											}).Cast<IPredicate>().ToList();
-
-			return predicates.Count == 1
-				? predicates[0]
-				: new PredicateGroup
-				{
-					Operator = GroupOperator.And,
-					Predicates = predicates
-				};
-		}
-
-		protected IPredicate GetEntityPredicate(IClassMapper classMap, object entity)
-		{
-			var predicateType = typeof(FieldPredicate<>).MakeGenericType(classMap.EntityType);
-			IList<IPredicate> predicates = new List<IPredicate>();
-			foreach (var kvp in XExtensions.GetObjectValues(entity))
-			{
-				var fieldPredicate = Activator.CreateInstance(predicateType) as IFieldPredicate;
-				fieldPredicate.Not = false;
-				fieldPredicate.Operator = Operator.Eq;
-				fieldPredicate.PropertyName = kvp.Key;
-				fieldPredicate.Value = kvp.Value;
-				predicates.Add(fieldPredicate);
-			}
-
-			return predicates.Count == 1
-				? predicates[0]
-				: new PredicateGroup
-				{
-					Operator = GroupOperator.And,
-					Predicates = predicates
-				};
-		}
-
 		protected GridReaderResultReader GetMultipleByBatch(IDbConnection connection, GetMultiplePredicate predicate,
 			IDbTransaction transaction, int? commandTimeout)
 		{
@@ -368,7 +304,7 @@ namespace ExistsForAll.DapperExtensions
 				var itemPredicate = item.Value as IPredicate;
 				if (itemPredicate == null && item.Value != null)
 				{
-					itemPredicate = GetPredicate(classMap, item.Value);
+					itemPredicate = classMap.GetPredicate(item.Value);
 				}
 
 				sql.AppendLine(SqlGenerator.Select(classMap, itemPredicate, item.Sort, parameters) +
@@ -397,7 +333,7 @@ namespace ExistsForAll.DapperExtensions
 				var itemPredicate = item.Value as IPredicate;
 				if (itemPredicate == null && item.Value != null)
 				{
-					itemPredicate = GetPredicate(classMap, item.Value);
+					itemPredicate = classMap.GetPredicate(item.Value);
 				}
 
 				var sql = SqlGenerator.Select(classMap, itemPredicate, item.Sort, parameters);

@@ -165,7 +165,7 @@ namespace ExistsForAll.DapperExtensions
 		/// If the entity has a composite key, an IDictionary&lt;string, object&gt; is returned with the key values.
 		/// The key value for the entity will also be updated if the KeyType is a Guid or Identity.
 		/// </summary>
-		public static Task<dynamic> InsertAsync<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class
+		public static Task InsertAsync<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class
 		{
 			return Instance.InsertAsync(connection, entity, transaction, commandTimeout);
 		}

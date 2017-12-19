@@ -94,7 +94,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// <summary>
 		/// Fluently, maps an entity property to a column
 		/// </summary>
-		protected IPropertyMap Map<TOut>(Expression<Func<T, TOut>> expression)
+		protected PropertyMap Map<TOut>(Expression<Func<T, TOut>> expression)
 		{
 			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
 			return Map(propertyInfo, expression);
@@ -103,12 +103,12 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// <summary>
 		/// Fluently, maps an entity property to a column
 		/// </summary>
-		protected IPropertyMap Map<TOut>(PropertyInfo propertyInfo, Expression<Func<T, TOut>> expression)
+		protected PropertyMap Map<TOut>(PropertyInfo propertyInfo, Expression<Func<T, TOut>> expression)
 		{
 			var result = PropertyMapBuilder.BuildMap(expression);
 			GuardForDuplicatePropertyMap(result);
 			Properties.Add(result);
-			return result;
+			return (PropertyMap)result;
 		}
 
 		/// <summary>

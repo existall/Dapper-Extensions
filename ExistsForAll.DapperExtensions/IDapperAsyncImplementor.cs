@@ -12,7 +12,7 @@ namespace ExistsForAll.DapperExtensions
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Get{T}"/>.
 		/// </summary>
-		Task<T> GetAsync<T>(IDbConnection connection, dynamic id, IDbTransaction transaction = null, int? commandTimeout = null) where T : class;
+		Task<T> GetAsync<T>(IDbConnection connection, object id, IDbTransaction transaction = null, int? commandTimeout = null) where T : class;
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.GetList{T}"/>.
 		/// </summary>
@@ -37,7 +37,7 @@ namespace ExistsForAll.DapperExtensions
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Insert{T}(IDbConnection, T, IDbTransaction, int?)"/>.
 		/// </summary>
-		Task<dynamic> InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class;
+		Task InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = default(int?)) where T : class;
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Update{T}(IDbConnection, T, IDbTransaction, int?)"/>.
 		/// </summary>

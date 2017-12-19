@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using ExistsForAll.DapperExtensions.Mapper;
@@ -12,9 +12,9 @@ namespace ExistsForAll.DapperExtensions
 
 		private IDbTransaction _transaction;
 
-		public Database(IDbConnection connection, ISqlGenerator sqlGenerator)
+		public Database(IDbConnection connection, IDapperImplementor dapperImplementor)
 		{
-			_dapper = new DapperImplementor(sqlGenerator);
+			_dapper = dapperImplementor;
 			Connection = connection;
 
 			if (Connection.State != ConnectionState.Open)
@@ -116,24 +116,24 @@ namespace ExistsForAll.DapperExtensions
 			_dapper.Insert<T>(Connection, entities, _transaction, commandTimeout);
 		}
 
-		public dynamic Insert<T>(T entity, IDbTransaction transaction, int? commandTimeout) where T : class
+		public void Insert<T>(T entity, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			return _dapper.Insert<T>(Connection, entity, transaction, commandTimeout);
+			_dapper.Insert<T>(Connection, entity, transaction, commandTimeout);
 		}
 
-		public dynamic Insert<T>(T entity, int? commandTimeout) where T : class
+		public void Insert<T>(T entity, int? commandTimeout) where T : class
 		{
-			return _dapper.Insert<T>(Connection, entity, _transaction, commandTimeout);
+			_dapper.Insert<T>(Connection, entity, _transaction, commandTimeout);
 		}
 
 		public bool Update<T>(T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class
 		{
-			return _dapper.Update<T>(Connection, entity, transaction, commandTimeout, ignoreAllKeyProperties);
+			return _dapper.Update<T>(Connection, entity, transaction, commandTimeout);
 		}
 
 		public bool Update<T>(T entity, int? commandTimeout, bool ignoreAllKeyProperties) where T : class
 		{
-			return _dapper.Update<T>(Connection, entity, _transaction, commandTimeout, ignoreAllKeyProperties);
+			return _dapper.Update<T>(Connection, entity, _transaction, commandTimeout);
 		}
 
 		public bool Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout) where T : class
@@ -205,20 +205,5 @@ namespace ExistsForAll.DapperExtensions
 		{
 			return _dapper.GetMultiple(Connection, predicate, _transaction, commandTimeout);
 		}
-
-		public void ClearCache()
-		{
-			_dapper.SqlGenerator.Configuration.ClearCache();
-		}
-
-		public Guid GetNextGuid()
-		{
-			return _dapper.SqlGenerator.Configuration.GetNextGuid();
-		}
-
-		public IClassMapper GetMap<T>() where T : class
-		{
-			return _dapper.SqlGenerator.Configuration.GetMap<T>();
-		}
 	}
-}*/
+}

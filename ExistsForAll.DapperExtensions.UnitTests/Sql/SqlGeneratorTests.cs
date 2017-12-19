@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Sql;
 using ExistsForAll.DapperExtensions.UnitTests.Mapping;

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using ExistsForAll.DapperExtensions.Mapper;
-using Xunit;
 
 namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 {

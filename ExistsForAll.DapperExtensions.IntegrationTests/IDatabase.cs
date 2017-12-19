@@ -18,8 +18,8 @@ namespace ExistsForAll.DapperExtensions
 		T Get<T>(dynamic id, int? commandTimeout = null) where T : class;
 		void Insert<T>(IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout = null) where T : class;
 		void Insert<T>(IEnumerable<T> entities, int? commandTimeout = null) where T : class;
-		dynamic Insert<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
-		dynamic Insert<T>(T entity, int? commandTimeout = null) where T : class;
+		void Insert<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
+		void Insert<T>(T entity, int? commandTimeout = null) where T : class;
 		bool Update<T>(T entity, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
 		bool Update<T>(T entity, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
 		bool Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
@@ -36,8 +36,5 @@ namespace ExistsForAll.DapperExtensions
 		int Count<T>(object predicate, int? commandTimeout = null) where T : class;
 		IMultipleResultReader GetMultiple(GetMultiplePredicate predicate, IDbTransaction transaction, int? commandTimeout = null);
 		IMultipleResultReader GetMultiple(GetMultiplePredicate predicate, int? commandTimeout = null);
-		void ClearCache();
-		Guid GetNextGuid();
-		IClassMapper GetMap<T>() where T : class;
 	}
 }

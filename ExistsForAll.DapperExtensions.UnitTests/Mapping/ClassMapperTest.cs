@@ -63,11 +63,11 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 		{
 			var sut = new IntEntityClassMapper();
 
-			Assert.Equal(sut.EntityType, typeof(IntEntity));
+			Assert.Equal(typeof(IntEntity), sut.EntityType);
 		}
 
 		[Fact]
-		public void EntityType_WhenTableAndSchemaAreSet_ShouldMatchWithProperiesValues()
+		public void EntityType_WhenTableAndSchemaAreSet_ShouldMatchWithPropertiesValues()
 		{
 			const string schemaName = "schema_name";
 			const string tableName = "table_name";

@@ -133,5 +133,65 @@ namespace ExistsForAll.DapperExtensions.Sql
 					Predicates = predicates
 				};
 		}
+		
+		public static IPredicate GetPredicate(this IClassMapper classMap, object predicate)
+		{
+			var wherePredicate = predicate as IPredicate;
+			if (wherePredicate == null && predicate != null)
+			{
+				wherePredicate = GetEntityPredicate(classMap, predicate);
+			}
+
+			return wherePredicate;
+		}
+
+		public static IPredicate GetEntityPredicate(this IClassMapper classMap, object entity)
+		{
+			var predicateType = typeof(FieldPredicate<>).MakeGenericType(classMap.EntityType);
+			var predicates = new List<IPredicate>();
+
+			foreach (var kvp in XExtensions.GetObjectValues(entity))
+			{
+				var fieldPredicate = (IFieldPredicate)Activator.CreateInstance(predicateType);
+				fieldPredicate.Not = false;
+				fieldPredicate.Operator = Operator.Eq;
+				fieldPredicate.PropertyName = kvp.Key;
+				fieldPredicate.Value = kvp.Value;
+				predicates.Add(fieldPredicate);
+			}
+
+			return predicates.Count == 1
+				? predicates[0]
+				: new PredicateGroup
+				{
+					Operator = GroupOperator.And,
+					Predicates = predicates
+				};
+		}
+
+		public static IPredicate GetKeyPredicate<T>(this IClassMapper classMap, T entity) where T : class
+		{
+			var keys = classMap.Keys;
+
+			if (!keys.Any())
+				throw new ArgumentException("At least one Key column must be defined.");
+
+			var predicates = keys.Select(field => new FieldPredicate<T>
+				{
+					Not = false,
+					Operator = Operator.Eq,
+					PropertyName = field.Name,
+					Value = field.Getter(entity)
+				}).Cast<IPredicate>()
+				.ToArray();
+
+			return predicates.Length == 1
+				? predicates[0]
+				: new PredicateGroup
+				{
+					Operator = GroupOperator.And,
+					Predicates = predicates
+				};
+		}
 	}
 }
