@@ -17,20 +17,14 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		{
 			var setType = typeof(Action<,>).MakeGenericType(new[] { typeof(T), propertyInfo.PropertyType });
 
-			var @delegate = propertyInfo.GetSetMethod()?.CreateDelegate(setType);
+			var setter = propertyInfo.GetSetMethod()?.CreateDelegate(setType);
 
-			return @delegate as Action<T, TOut>;
+			if (setter == null)
+			{
+				return (x, y) => throw new ClassMapException($"No Set method found for {typeof(T)}.{propertyInfo.Name}, check the ClassMap");
+			}
 
-			//var memberExpression = (MemberExpression)expression.Body;
-
-			//var target = Expression.Parameter(typeof(T), "x");
-			//var value = Expression.Parameter(memberExpression.Type, "v");
-
-			//var memberProperty = Expression.MakeMemberAccess(target, memberExpression.Member);
-			//var assignment = Expression.Assign(memberProperty, value);
-
-			//var lambda = Expression.Lambda<Action<T, TOut>>(assignment, target, value);
-			//return lambda.Compile();
+			return setter as Action<T, TOut>;
 		}
 	}
 }

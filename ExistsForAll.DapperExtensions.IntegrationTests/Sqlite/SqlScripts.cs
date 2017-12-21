@@ -1,4 +1,4 @@
-﻿namespace DapperExtensions.Test.IntegrationTests.Sqlite
+﻿namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 {
 	public static class SqlScripts
 	{
@@ -31,7 +31,7 @@
 )";
 
 		public static string Animal = @"CREATE TABLE Animal (
-    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
     Name NVARCHAR(50)
 )";
 	}

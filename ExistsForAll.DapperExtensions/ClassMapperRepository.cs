@@ -18,7 +18,7 @@ namespace ExistsForAll.DapperExtensions
 
 		public IClassMapper GetMap(Type entityType)
 		{
-			return _mapIndex.TryGetValue(entityType.TypeHandle, out var map) ? map : null;
+			return _mapIndex.TryGetValue(entityType.TypeHandle, out var map) ? map : throw new ClassMapException($"No ClassMap was found for type {entityType}.");
 		}
 
 		public IClassMapper GetMap<T>()

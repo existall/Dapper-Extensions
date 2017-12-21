@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Predicates;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions

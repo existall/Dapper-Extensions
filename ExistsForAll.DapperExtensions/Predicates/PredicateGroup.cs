@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	/// <summary>
 	/// Groups IPredicates together using the specified group operator.

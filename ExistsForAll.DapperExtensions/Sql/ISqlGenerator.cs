@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Predicates;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {

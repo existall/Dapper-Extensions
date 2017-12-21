@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using ExistsForAll.DapperExtensions.Mapper;
-using ExistsForAll.DapperExtensions.Sql;
+using ExistsForAll.DapperExtensions.Predicates;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.IntegrationTests
 {
 	public class Database : IDatabase
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public interface IPredicate
 	{

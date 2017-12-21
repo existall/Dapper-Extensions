@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public class FieldPredicate<T> : ComparePredicate, IFieldPredicate
 		where T : class

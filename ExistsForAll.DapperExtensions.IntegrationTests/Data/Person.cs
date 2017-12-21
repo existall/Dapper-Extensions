@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ExistsForAll.DapperExtensions.Mapper;
 
-namespace DapperExtensions.Test.Data
+namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 {
 	public class Person
 	{

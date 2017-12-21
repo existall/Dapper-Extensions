@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Dapper;
 using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Predicates;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
@@ -230,7 +231,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		private string BuildSelectColumns(IClassMapper classMap)
 		{
-			var columns = classMap.Keys.Where(x => !x.Ignored)
+			var columns = classMap.Keys
 				.Concat(classMap.Properties.Where(x => !x.Ignored))
 				.Select(x => GetColumnName(classMap, x, true));
 

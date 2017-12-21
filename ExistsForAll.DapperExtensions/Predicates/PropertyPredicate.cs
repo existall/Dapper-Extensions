@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ExistsForAll.DapperExtensions.Sql;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public class PropertyPredicate : ComparePredicate, IPropertyPredicate
 	{

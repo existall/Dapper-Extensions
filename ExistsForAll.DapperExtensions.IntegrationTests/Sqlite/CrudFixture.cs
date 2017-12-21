@@ -1,12 +1,11 @@
-﻿using System.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DapperExtensions.Test.Data;
-using ExistsForAll.DapperExtensions;
+using ExistsForAll.DapperExtensions.IntegrationTests.Data;
+using ExistsForAll.DapperExtensions.Predicates;
 using NUnit.Framework;
 
-namespace DapperExtensions.Test.IntegrationTests.Sqlite
+namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 {
 	[TestFixture]
 	public class CrudFixture
@@ -36,8 +35,9 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 			public void AddsEntityToDatabase_ReturnsGeneratedPrimaryKey()
 			{
 				Animal a1 = new Animal { Name = "Foo" };
-				Db.Insert(a1);
 
+				Db.Insert(a1);
+			
 				var a2 = Db.Get<Animal>(a1.Id);
 				Assert.AreNotEqual(Guid.Empty, a2.Id);
 				Assert.AreEqual(a1.Id, a2.Id);
@@ -109,18 +109,18 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				Assert.AreEqual("Bar", p2.LastName);
 			}
 
-			//[Test]
-			//[Ignore] //TODO: multikey identity
-			//public void UsingCompositeKey_ReturnsEntity()
-			//{
-			//    Multikey m1 = new Multikey { Key2 = "key", Value = "bar" };
-			//    var key = Db.Insert(m1);
+			[Test]
+			//TODO: multikey identity
+			public void UsingCompositeKey_ReturnsEntity()
+			{
+			    Multikey m1 = new Multikey { Key1 = 1, Key2 = "key", Value = "bar" };
+			    Db.Insert<Multikey>(m1);
 
-			//    Multikey m2 = Db.Get<Multikey>(new { key.Key1, key.Key2 });
-			//    Assert.AreEqual(1, m2.Key1);
-			//    Assert.AreEqual("key", m2.Key2);
-			//    Assert.AreEqual("bar", m2.Value);
-			//}
+			    Multikey m2 = Db.Get<Multikey>(new { m1.Key1, m1.Key2 });
+			    Assert.AreEqual(1, m2.Key1);
+			    Assert.AreEqual("key", m2.Key2);
+			    Assert.AreEqual("bar", m2.Value);
+			}
 		}
 
 		[TestFixture]
@@ -169,7 +169,7 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				var list = Db.GetList<Person>();
 				Assert.AreEqual(3, list.Count());
 
-				IPredicate pred = Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar");
+				IPredicate pred = Predicates.Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar");
 				var result = Db.Delete<Person>(pred);
 				Assert.IsTrue(result);
 
@@ -269,7 +269,7 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow });
 				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
-				var predicate = Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
+				var predicate = Predicates.Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
 				IEnumerable<Person> list = Db.GetList<Person>(predicate, null);
 				Assert.AreEqual(2, list.Count());
 				Assert.IsTrue(list.All(p => p.FirstName == "a" || p.FirstName == "c"));
@@ -329,8 +329,8 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 
 				IList<ISort> sort = new List<ISort>
 									{
-										Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Sort<Person>(p => p.FirstName)
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
 				IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 0, 2);
@@ -352,11 +352,11 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				Db.Insert(p3);
 				Db.Insert(p4);
 
-				var predicate = Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
+				var predicate = Predicates.Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
 				IList<ISort> sort = new List<ISort>
 									{
-										Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Sort<Person>(p => p.FirstName)
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
 				IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
@@ -379,8 +379,8 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 
 				IList<ISort> sort = new List<ISort>
 									{
-										Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Sort<Person>(p => p.FirstName)
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
 				IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 1, 2);
@@ -405,8 +405,8 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				var predicate = new { Active = true };
 				IList<ISort> sort = new List<ISort>
 									{
-										Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Sort<Person>(p => p.FirstName)
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
 				IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
@@ -438,7 +438,7 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
 				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
 
-				var predicate = Predicates.Field<Person>(f => f.DateCreated, Operator.Lt, DateTime.UtcNow.AddDays(-5));
+				var predicate = Predicates.Predicates.Field<Person>(f => f.DateCreated, Operator.Lt, DateTime.UtcNow.AddDays(-5));
 				int count = Db.Count<Person>(predicate);
 				Assert.AreEqual(2, count);
 			}
@@ -474,8 +474,8 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 
 				GetMultiplePredicate predicate = new GetMultiplePredicate();
 				predicate.Add<Person>(null);
-				predicate.Add<Animal>(Predicates.Field<Animal>(a => a.Name, Operator.Like, "Ba%"));
-				predicate.Add<Person>(Predicates.Field<Person>(a => a.LastName, Operator.Eq, "c1"));
+				predicate.Add<Animal>(Predicates.Predicates.Field<Animal>(a => a.Name, Operator.Like, "Ba%"));
+				predicate.Add<Person>(Predicates.Predicates.Field<Person>(a => a.LastName, Operator.Eq, "c1"));
 
 				var result = Db.GetMultiple(predicate);
 				var people = result.Read<Person>().ToList();

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using DapperExtensions.Test.Data;
+using ExistsForAll.DapperExtensions.IntegrationTests.Data;
 using NUnit.Framework;
 
-namespace DapperExtensions.Test.IntegrationTests.Sqlite
+namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 {
 	[TestFixture]
 	public class TimerFixture

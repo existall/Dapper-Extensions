@@ -2,7 +2,7 @@
 using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public class BetweenPredicate<T> : BasePredicate, IBetweenPredicate
 		where T : class

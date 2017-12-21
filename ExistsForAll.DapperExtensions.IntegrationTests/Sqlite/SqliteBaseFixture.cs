@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using Dapper;
-using ExistsForAll.DapperExtensions;
-using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Sql;
 using NUnit.Framework;
 
-namespace DapperExtensions.Test.IntegrationTests.Sqlite
+namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 {
     public class SqliteBaseFixture
     {
@@ -35,7 +31,11 @@ namespace DapperExtensions.Test.IntegrationTests.Sqlite
 
             SQLiteConnection connection = new SQLiteConnection(connectionString);
 
-	        var config = new DapperExtensionsConfiguration {Dialect = new SqliteDialect()};
+	        var config = new DapperExtensionsConfiguration
+	        {
+		        Dialect = new SqliteDialect(), 
+		        AutoPopulateKeyGuidValue = true
+	        };
 
 	        var dapper = new DapperExtensionsBuilder().BuildImplementor(new[] {GetType().Assembly}, config);
             Db = new Database(connection, dapper.DapperImplementor);

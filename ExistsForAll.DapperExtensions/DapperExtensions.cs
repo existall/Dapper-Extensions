@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Predicates;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions

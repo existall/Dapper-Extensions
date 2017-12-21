@@ -1,4 +1,4 @@
-﻿namespace ExistsForAll.DapperExtensions
+﻿namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public abstract class ComparePredicate : BasePredicate
 	{

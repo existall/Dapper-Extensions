@@ -2,7 +2,7 @@
 using System.Text;
 using ExistsForAll.DapperExtensions.Sql;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public class ExistsPredicate<TSub> : IExistsPredicate
 		where TSub : class

@@ -1,13 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using ExistsForAll.DapperExtensions.Mapper;
 
-namespace DapperExtensions.Test.Data
+namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 {
-    class Animal
+    public class Animal
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
     }
+
+	public class AnimalMapper : ClassMapper<Animal>
+	{
+		public AnimalMapper()
+		{
+			Key(x => x.Id).GeneratedBy.Assigned();
+			Map(x => x.Name);
+		}
+	}
 }

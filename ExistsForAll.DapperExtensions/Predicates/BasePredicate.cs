@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.Predicates
 {
 	public abstract class BasePredicate : IBasePredicate
 	{

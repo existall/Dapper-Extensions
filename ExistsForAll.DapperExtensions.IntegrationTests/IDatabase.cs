@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using ExistsForAll.DapperExtensions.Mapper;
+using ExistsForAll.DapperExtensions.Predicates;
 
-namespace ExistsForAll.DapperExtensions
+namespace ExistsForAll.DapperExtensions.IntegrationTests
 {
 	public interface IDatabase : IDisposable
 	{
