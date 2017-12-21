@@ -6,7 +6,7 @@ using ExistsForAll.DapperExtensions.Predicates;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
-	internal static class ClassMapperExtensions
+	public static class ClassMapperExtensions
 	{
 		public static string IdentitySql(this IClassMapper classMap, ISqlDialect sqlDialect)
 		{
