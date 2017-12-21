@@ -39,7 +39,7 @@ namespace ExistsForAll.DapperExtensions
 
 			var enumerable = types
 				.Select(type => new {Type = type, Interface = type.GetTypeInfo().GetInterface(fullName)})
-				.Where(@t => t.Interface != null)
+				.Where(t => t.Interface != null)
 				.ToArray();
 
 			//var types = assemblies

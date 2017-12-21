@@ -115,7 +115,7 @@ namespace ExistsForAll.DapperExtensions
 		/// <param name="sqlDialect"></param>
 		public static void Configure(Type defaultMapper, IList<Assembly> mappingAssemblies, ISqlDialect sqlDialect)
 		{
-			var configuration = new DapperExtensionsConfiguration()
+			var configuration = new DapperExtensionsConfiguration
 			{
 				DefaultMapper = defaultMapper,
 				Dialect = sqlDialect

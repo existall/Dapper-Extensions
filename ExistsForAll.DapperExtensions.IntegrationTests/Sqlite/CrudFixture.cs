@@ -37,7 +37,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Animal a1 = new Animal { Name = "Foo" };
 
 				Db.Insert(a1);
-			
+
 				var a2 = Db.Get<Animal>(a1.Id);
 				Assert.AreNotEqual(Guid.Empty, a2.Id);
 				Assert.AreEqual(a1.Id, a2.Id);
@@ -113,13 +113,13 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			//TODO: multikey identity
 			public void UsingCompositeKey_ReturnsEntity()
 			{
-			    Multikey m1 = new Multikey { Key1 = 1, Key2 = "key", Value = "bar" };
-			    Db.Insert<Multikey>(m1);
+				Multikey m1 = new Multikey { Key1 = 1, Key2 = "key", Value = "bar" };
+				Db.Insert(m1);
 
-			    Multikey m2 = Db.Get<Multikey>(new { m1.Key1, m1.Key2 });
-			    Assert.AreEqual(1, m2.Key1);
-			    Assert.AreEqual("key", m2.Key2);
-			    Assert.AreEqual("bar", m2.Value);
+				Multikey m2 = Db.Get<Multikey>(new { m1.Key1, m1.Key2 });
+				Assert.AreEqual(1, m2.Key1);
+				Assert.AreEqual("key", m2.Key2);
+				Assert.AreEqual("bar", m2.Value);
 			}
 		}
 
@@ -288,204 +288,223 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Assert.AreEqual(1, list.Count());
 				Assert.IsTrue(list.All(p => p.FirstName == "c"));
 			}
-		}
-
-		[TestFixture]
-		public class GetPageMethod : SqliteBaseFixture
-		{
-			[Test]
-			public void UsingNullPredicate_ReturnsMatching()
-			{
-				var p1 = new Person
-				{
-					Active = true,
-					FirstName = "Sigma",
-					LastName = "Alpha",
-					DateCreated = DateTime.UtcNow
-
-				};
-				var p2 = new Person
-				{
-					Active = false,
-					FirstName = "Delta",
-					LastName = "Alpha",
-					DateCreated = DateTime.UtcNow
-
-				};
-				var p3 = new Person
-				{
-					Active = true,
-					FirstName = "Theta",
-					LastName = "Gamma",
-					DateCreated = DateTime.UtcNow
-				};
-				var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
-
-
-				Db.Insert(p1);
-				Db.Insert(p2);
-				Db.Insert(p3);
-				Db.Insert(p4);
-
-				IList<ISort> sort = new List<ISort>
-									{
-										Predicates.Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Predicates.Sort<Person>(p => p.FirstName)
-									};
-
-				IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 0, 2);
-				Assert.AreEqual(2, list.Count());
-				Assert.AreEqual(p2.Id, list.First().Id);
-				Assert.AreEqual(p1.Id, list.Skip(1).First().Id);
-			}
 
 			[Test]
-			public void UsingPredicate_ReturnsMatching()
+			public void UsingProjections_Returns_ChosenField()
 			{
-				var p1 = new Person { Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow };
-				var p2 = new Person { Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow };
-				var p3 = new Person { Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow };
-				var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
+				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
 
-				Db.Insert(p1);
-				Db.Insert(p2);
-				Db.Insert(p3);
-				Db.Insert(p4);
+				var projections = new List<IProjection> { Predicates.Predicates.Projection<Person>(x => x.FirstName) };
 
-				var predicate = Predicates.Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
-				IList<ISort> sort = new List<ISort>
-									{
-										Predicates.Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Predicates.Sort<Person>(p => p.FirstName)
-									};
+				var results = Db.GetList<Person>(projections: projections);
 
-				IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
-				Assert.AreEqual(2, list.Count());
-				Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
-			}
+				Assert.AreEqual(results.Count(), 1);
 
-			[Test]
-			public void NotFirstPage_Returns_NextResults()
-			{
-				var p1 = new Person { Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow };
-				var p2 = new Person { Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow };
-				var p3 = new Person { Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow };
-				var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
+				var result = results.Single();
 
-				Db.Insert(p1);
-				Db.Insert(p2);
-				Db.Insert(p3);
-				Db.Insert(p4);
-
-				IList<ISort> sort = new List<ISort>
-									{
-										Predicates.Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Predicates.Sort<Person>(p => p.FirstName)
-									};
-
-				IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 1, 2);
-				Assert.AreEqual(2, list.Count());
-				Assert.AreEqual(p4.Id, list.First().Id);
-				Assert.AreEqual(p3.Id, list.Skip(1).First().Id);
-			}
-
-			[Test]
-			public void UsingObject_ReturnsMatching()
-			{
-				var p1 = new Person {Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow};
-				var p2 = new Person {Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow};
-				var p3 = new Person {Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow};
-				var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
-
-				Db.Insert(p1);
-				Db.Insert(p2);
-				Db.Insert(p3);
-				Db.Insert(p4);
-
-				var predicate = new { Active = true };
-				IList<ISort> sort = new List<ISort>
-									{
-										Predicates.Predicates.Sort<Person>(p => p.LastName),
-										Predicates.Predicates.Sort<Person>(p => p.FirstName)
-									};
-
-				IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
-				Assert.AreEqual(2, list.Count());
-				Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
+				Assert.AreEqual(result.FirstName, "a");
+				Assert.IsNull(result.LastName);
+				Assert.IsFalse(result.Active);
+				Assert.AreEqual(result.DateCreated, default(DateTime));
 			}
 		}
+	}
 
-		[TestFixture]
-		public class CountMethod : SqliteBaseFixture
+	[TestFixture]
+	public class GetPageMethod : SqliteBaseFixture
+	{
+		[Test]
+		public void UsingNullPredicate_ReturnsMatching()
 		{
-			[Test]
-			public void UsingNullPredicate_Returns_Count()
+			var p1 = new Person
 			{
-				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
-				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+				Active = true,
+				FirstName = "Sigma",
+				LastName = "Alpha",
+				DateCreated = DateTime.UtcNow
 
-				int count = Db.Count<Person>(null);
-				Assert.AreEqual(4, count);
-			}
-
-			[Test]
-			public void UsingPredicate_Returns_Count()
+			};
+			var p2 = new Person
 			{
-				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
-				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+				Active = false,
+				FirstName = "Delta",
+				LastName = "Alpha",
+				DateCreated = DateTime.UtcNow
 
-				var predicate = Predicates.Predicates.Field<Person>(f => f.DateCreated, Operator.Lt, DateTime.UtcNow.AddDays(-5));
-				int count = Db.Count<Person>(predicate);
-				Assert.AreEqual(2, count);
-			}
-
-			[Test]
-			public void UsingObject_Returns_Count()
+			};
+			var p3 = new Person
 			{
-				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
-				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+				Active = true,
+				FirstName = "Theta",
+				LastName = "Gamma",
+				DateCreated = DateTime.UtcNow
+			};
+			var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
 
-				var predicate = new { FirstName = new[] { "b", "d" } };
-				int count = Db.Count<Person>(predicate);
-				Assert.AreEqual(2, count);
-			}
+
+			Db.Insert(p1);
+			Db.Insert(p2);
+			Db.Insert(p3);
+			Db.Insert(p4);
+
+			IList<ISort> sort = new List<ISort>
+									{
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
+									};
+
+			IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 0, 2);
+			Assert.AreEqual(2, list.Count());
+			Assert.AreEqual(p2.Id, list.First().Id);
+			Assert.AreEqual(p1.Id, list.Skip(1).First().Id);
 		}
 
-		[TestFixture]
-		public class GetMultipleMethod : SqliteBaseFixture
+		[Test]
+		public void UsingPredicate_ReturnsMatching()
 		{
-			[Test]
-			public void ReturnsItems()
-			{
-				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
-				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
-				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+			var p1 = new Person { Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p2 = new Person { Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p3 = new Person { Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow };
+			var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
 
-				Db.Insert(new Animal { Name = "Foo" });
-				Db.Insert(new Animal { Name = "Bar" });
-				Db.Insert(new Animal { Name = "Baz" });
+			Db.Insert(p1);
+			Db.Insert(p2);
+			Db.Insert(p3);
+			Db.Insert(p4);
 
-				GetMultiplePredicate predicate = new GetMultiplePredicate();
-				predicate.Add<Person>(null);
-				predicate.Add<Animal>(Predicates.Predicates.Field<Animal>(a => a.Name, Operator.Like, "Ba%"));
-				predicate.Add<Person>(Predicates.Predicates.Field<Person>(a => a.LastName, Operator.Eq, "c1"));
+			var predicate = Predicates.Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
+			IList<ISort> sort = new List<ISort>
+									{
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
+									};
 
-				var result = Db.GetMultiple(predicate);
-				var people = result.Read<Person>().ToList();
-				var animals = result.Read<Animal>().ToList();
-				var people2 = result.Read<Person>().ToList();
+			IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
+			Assert.AreEqual(2, list.Count());
+			Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
+		}
 
-				Assert.AreEqual(4, people.Count);
-				Assert.AreEqual(2, animals.Count);
-				Assert.AreEqual(1, people2.Count);
-			}
+		[Test]
+		public void NotFirstPage_Returns_NextResults()
+		{
+			var p1 = new Person { Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p2 = new Person { Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p3 = new Person { Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow };
+			var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
+
+			Db.Insert(p1);
+			Db.Insert(p2);
+			Db.Insert(p3);
+			Db.Insert(p4);
+
+			IList<ISort> sort = new List<ISort>
+									{
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
+									};
+
+			IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 1, 2);
+			Assert.AreEqual(2, list.Count());
+			Assert.AreEqual(p4.Id, list.First().Id);
+			Assert.AreEqual(p3.Id, list.Skip(1).First().Id);
+		}
+
+		[Test]
+		public void UsingObject_ReturnsMatching()
+		{
+			var p1 = new Person { Active = true, FirstName = "Sigma", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p2 = new Person { Active = false, FirstName = "Delta", LastName = "Alpha", DateCreated = DateTime.UtcNow };
+			var p3 = new Person { Active = true, FirstName = "Theta", LastName = "Gamma", DateCreated = DateTime.UtcNow };
+			var p4 = new Person { Active = false, FirstName = "Iota", LastName = "Beta", DateCreated = DateTime.UtcNow };
+
+			Db.Insert(p1);
+			Db.Insert(p2);
+			Db.Insert(p3);
+			Db.Insert(p4);
+
+			var predicate = new { Active = true };
+			IList<ISort> sort = new List<ISort>
+									{
+										Predicates.Predicates.Sort<Person>(p => p.LastName),
+										Predicates.Predicates.Sort<Person>(p => p.FirstName)
+									};
+
+			IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
+			Assert.AreEqual(2, list.Count());
+			Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
+		}
+	}
+
+	[TestFixture]
+	public class CountMethod : SqliteBaseFixture
+	{
+		[Test]
+		public void UsingNullPredicate_Returns_Count()
+		{
+			Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
+			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+
+			int count = Db.Count<Person>(null);
+			Assert.AreEqual(4, count);
+		}
+
+		[Test]
+		public void UsingPredicate_Returns_Count()
+		{
+			Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
+			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+
+			var predicate = Predicates.Predicates.Field<Person>(f => f.DateCreated, Operator.Lt, DateTime.UtcNow.AddDays(-5));
+			int count = Db.Count<Person>(predicate);
+			Assert.AreEqual(2, count);
+		}
+
+		[Test]
+		public void UsingObject_Returns_Count()
+		{
+			Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
+			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+
+			var predicate = new { FirstName = new[] { "b", "d" } };
+			int count = Db.Count<Person>(predicate);
+			Assert.AreEqual(2, count);
+		}
+	}
+
+	[TestFixture]
+	public class GetMultipleMethod : SqliteBaseFixture
+	{
+		[Test]
+		public void ReturnsItems()
+		{
+			Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = false, FirstName = "b", LastName = "b1", DateCreated = DateTime.UtcNow.AddDays(-10) });
+			Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
+			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
+
+			Db.Insert(new Animal { Name = "Foo" });
+			Db.Insert(new Animal { Name = "Bar" });
+			Db.Insert(new Animal { Name = "Baz" });
+
+			GetMultiplePredicate predicate = new GetMultiplePredicate();
+			predicate.Add<Person>(null);
+			predicate.Add<Animal>(Predicates.Predicates.Field<Animal>(a => a.Name, Operator.Like, "Ba%"));
+			predicate.Add<Person>(Predicates.Predicates.Field<Person>(a => a.LastName, Operator.Eq, "c1"));
+
+			var result = Db.GetMultiple(predicate);
+			var people = result.Read<Person>().ToList();
+			var animals = result.Read<Animal>().ToList();
+			var people2 = result.Read<Person>().ToList();
+
+			Assert.AreEqual(4, people.Count);
+			Assert.AreEqual(2, animals.Count);
+			Assert.AreEqual(1, people2.Count);
 		}
 	}
 }

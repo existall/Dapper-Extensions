@@ -29,7 +29,7 @@ namespace ExistsForAll.DapperExtensions
 		{
 			var classMap = ClassMappers.GetMap<T>();
 			var predicate = classMap.GetIdPredicate(id);
-			var result = GetList<T>(connection, classMap, predicate, null, transaction, commandTimeout, true).SingleOrDefault();
+			var result = GetList<T>(connection, classMap, predicate, null, transaction, commandTimeout, true, null).SingleOrDefault();
 			return result;
 		}
 
@@ -161,7 +161,7 @@ namespace ExistsForAll.DapperExtensions
 
 			var columns = classMap.GetMutableColumns();
 
-			foreach (var property in XExtensions.GetObjectValues(entity)
+			foreach (var property in ReflectionHelper.GetObjectValues(entity)
 				.Where(property => columns.Any(c => c.Name == property.Key)))
 			{
 				dynamicParameters.Add(property.Key, property.Value);
@@ -191,16 +191,30 @@ namespace ExistsForAll.DapperExtensions
 			return Delete<T>(connection, classMap, wherePredicate, transaction, commandTimeout);
 		}
 
-		public IEnumerable<T> GetList<T>(IDbConnection connection, object predicate, IList<ISort> sort,
-			IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
+		public IEnumerable<T> GetList<T>(
+			IDbConnection connection,
+			object predicate,
+			IList<ISort> sort,
+			IDbTransaction transaction,
+			int? commandTimeout,
+			bool buffered,
+			IList<IProjection> projections = null) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
-			return GetList<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, buffered);
+			return GetList<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, buffered, projections);
 		}
 
-		public IEnumerable<T> GetPage<T>(IDbConnection connection, object predicate, IList<ISort> sort, int page,
-			int resultsPerPage, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
+		public IEnumerable<T> GetPage<T>(
+			IDbConnection connection,
+			object predicate,
+			IList<ISort> sort,
+			int page,
+			int resultsPerPage,
+			IDbTransaction transaction,
+			int? commandTimeout,
+			bool buffered,
+			IList<IProjection> projections = null) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
@@ -208,8 +222,16 @@ namespace ExistsForAll.DapperExtensions
 				buffered);
 		}
 
-		public IEnumerable<T> GetSet<T>(IDbConnection connection, object predicate, IList<ISort> sort, int firstResult,
-			int maxResults, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
+		public IEnumerable<T> GetSet<T>(
+			IDbConnection connection,
+			object predicate,
+			IList<ISort> sort,
+			int firstResult,
+			int maxResults,
+			IDbTransaction transaction,
+			int? commandTimeout,
+			bool buffered,
+			IList<IProjection> projections = null) where T : class
 		{
 			IClassMapper classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
@@ -251,11 +273,11 @@ namespace ExistsForAll.DapperExtensions
 			IList<ISort> sort,
 			IDbTransaction transaction,
 			int? commandTimeout,
-			bool buffered) where T : class
+			bool buffered,IList<IProjection> projections) where T : class
 		{
 			var parameters = new Dictionary<string, object>();
 
-			var sql = SqlGenerator.Select(classMap, predicate, sort, parameters);
+			var sql = SqlGenerator.Select(classMap, predicate, sort, parameters, projections);
 
 			var dynamicParameters = new DynamicParameters();
 

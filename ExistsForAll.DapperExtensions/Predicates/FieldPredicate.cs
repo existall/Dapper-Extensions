@@ -7,8 +7,7 @@ using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions.Predicates
 {
-	public class FieldPredicate<T> : ComparePredicate, IFieldPredicate
-		where T : class
+	public class FieldPredicate : ComparePredicate, IFieldPredicate
 	{
 		public object Value { get; set; }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Dapper;
 using ExistsForAll.DapperExtensions.Sql;
@@ -102,7 +103,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
         public string ReadScriptFile(string name)
         {
             string fileName = GetType().Namespace + ".Sql." + name + ".sql";
-            using (Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(fileName))
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(fileName))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();

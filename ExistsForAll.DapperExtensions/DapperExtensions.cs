@@ -128,7 +128,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static void Insert<T>(this IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			Instance.Insert<T>(connection, entities, transaction, commandTimeout);
+			Instance.Insert(connection, entities, transaction, commandTimeout);
 		}
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static void Insert<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			Instance.Insert<T>(connection, entity, transaction, commandTimeout);
+			Instance.Insert(connection, entity, transaction, commandTimeout);
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static bool Update<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			return Instance.Update<T>(connection, entity, transaction, commandTimeout);
+			return Instance.Update(connection, entity, transaction, commandTimeout);
 		}
 
 		/// <summary>
@@ -155,7 +155,7 @@ namespace ExistsForAll.DapperExtensions
 		/// </summary>
 		public static bool Delete<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
 		{
-			return Instance.Delete<T>(connection, entity, transaction, commandTimeout);
+			return Instance.Delete(connection, entity, transaction, commandTimeout);
 		}
 
 		/// <summary>

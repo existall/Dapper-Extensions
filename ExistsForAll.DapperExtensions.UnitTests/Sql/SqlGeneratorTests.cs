@@ -23,7 +23,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var dictionary = new Dictionary<string, object>();
 
-			var result = sut.Select(mapper, null, null, dictionary);
+			var result = sut.Select(mapper, null, null, dictionary, null);
 
 			Assert.Equal(result, BaseSql);
 		}
@@ -39,7 +39,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var predicate = Predicates.Predicates.Field<IntEntity>(x => x.String, Operator.Eq, "hello");
 
-			var result = sut.Select(mapper, predicate, null, @params);
+			var result = sut.Select(mapper, predicate, null, @params, null);
 
 			var expected = $"{BaseSql} WHERE (String = @String_0)";
 
@@ -60,7 +60,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 			var idSort = Predicates.Predicates.Sort<IntEntity>(x => x.Id);
 			var stringSort = Predicates.Predicates.Sort<IntEntity>(x => x.String, false);
 
-			var result = sut.Select(mapper, predicate, new[] { idSort, stringSort }, @params);
+			var result = sut.Select(mapper, predicate, new[] { idSort, stringSort }, @params, null);
 
 			Assert.Equal(result, $"{BaseSql} WHERE (String = @String_0) ORDER BY Id ASC, String DESC");
 		}
@@ -82,7 +82,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 			var idSort = Predicates.Predicates.Sort<IntEntity>(x => x.Id);
 			var stringSort = Predicates.Predicates.Sort<IntEntity>(x => x.String, false);
 
-			var result = sut.SelectSet(mapper, predicate, new[] { idSort, stringSort }, firstResult, maxResults, @params);
+			var result = sut.SelectSet(mapper, predicate, new[] {idSort, stringSort}, firstResult, maxResults, @params, null);
 
 			Assert.Equal(result, $"{BaseSql} WHERE (String = @String_0) ORDER BY Id ASC, String DESC {TestSqlDialect.SetSql(firstResult, maxResults)}");
 		}
@@ -104,7 +104,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 			var idSort = Predicates.Predicates.Sort<IntEntity>(x => x.Id);
 			var stringSort = Predicates.Predicates.Sort<IntEntity>(x => x.String, false);
 
-			var result = sut.SelectPaged(mapper, predicate, new[] { idSort, stringSort }, page, resultsPerPage, @params);
+			var result = sut.SelectPaged(mapper, predicate, new[] { idSort, stringSort }, page, resultsPerPage, @params, null);
 
 			Assert.Equal(result, $"{BaseSql} WHERE (String = @String_0) ORDER BY Id ASC, String DESC {TestSqlDialect.PageSql(page, resultsPerPage)}");
 		}
@@ -146,7 +146,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var result = sut.Insert(mapper);
 
-			Assert.Equal(result, $"INSERT INTO table (String, DateTime, Guid) VALUES (@String, @DateTime, @Guid) RETURNING Id INTO @IdOutParam");
+			Assert.Equal(result, $"INSERT INTO table (String, DateTime, Guid) VALUES (@String, @DateTime, @Guid)");
 		}
 
 		[Fact]
@@ -198,6 +198,24 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 		}
 
 		[Fact]
+		public void Select_WithoutPredicateAndSortWithProjection_ShouldGeneratesSql()
+		{
+			var sut = BuildSut();
+
+			var mapper = GetClassMapper();
+
+			var projection = Predicates.Predicates.Projection<IntEntity>(x => x.String);
+
+			var projections = new List<IProjection>(){ projection };
+
+			var @params = GetParams();
+
+			var result = sut.Select(mapper, null,null, @params, projections);
+
+			Assert.Equal(result, $"SELECT String FROM table");
+		}
+
+		[Fact]
 		public void Update1_WhenClassMapHasAssignedId_ShouldGetUpdateStatement()
 		{
 			var sut = BuildSut();
@@ -210,19 +228,19 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var timeSpan = Run(() =>
 			{
-				var result = sut.Select(mapper, null, null, @params);
+				var result = sut.Select(mapper, null, null, @params, null);
 			});
 
 			var timeSpan1 = Run(() =>
 			{
-				var result = sut.Select(mapper, null, null, @params);
+				var result = sut.Select(mapper, null, null, @params, null);
 			});
 
 			var timeSpan12 = Run(() =>
 			{
 				for (int i = 0; i < 10000; i++)
 				{
-					var result = sut.Select(mapper, null, null, @params);
+					var result = sut.Select(mapper, null, null, @params, null);
 				}
 			});
 		}

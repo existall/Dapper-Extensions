@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using ExistsForAll.DapperExtensions.Predicates;
 
 namespace ExistsForAll.DapperExtensions
 {
@@ -16,15 +17,15 @@ namespace ExistsForAll.DapperExtensions
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.GetList{T}"/>.
 		/// </summary>
-		Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class;
+		Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null, IList<IProjection> projections = null) where T : class;
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.GetPage{T}"/>.
 		/// </summary>
-		Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int page = 1, int resultsPerPage = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class;
+		Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int page = 1, int resultsPerPage = 10, IDbTransaction transaction = null, int? commandTimeout = null, IList<IProjection> projections = null) where T : class;
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.GetSet{T}"/>.
 		/// </summary>
-		Task<IEnumerable<T>> GetSetAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int firstResult = 1, int maxResults = 10, IDbTransaction transaction = null, int? commandTimeout = null) where T : class;
+		Task<IEnumerable<T>> GetSetAsync<T>(IDbConnection connection, object predicate = null, IList<ISort> sort = null, int firstResult = 1, int maxResults = 10, IDbTransaction transaction = null, int? commandTimeout = null, IList<IProjection> projections = null) where T : class;
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Count{T}"/>.
 		/// </summary>

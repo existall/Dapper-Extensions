@@ -8,14 +8,14 @@ namespace ExistsForAll.DapperExtensions.Mapper
 	{
 		public static IPropertyMap BuildMap<T, TOut>(Expression<Func<T,TOut>> expression)
 		{
-			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
 			var property = new PropertyMap<T, TOut>(propertyInfo, expression.Compile(), GenerateSetterMethod<T, TOut>(propertyInfo));
 			return property;
 		}
 
 		public static Action<T, TOut> GenerateSetterMethod<T,TOut>(PropertyInfo propertyInfo)
 		{
-			var setType = typeof(Action<,>).MakeGenericType(new[] { typeof(T), propertyInfo.PropertyType });
+			var setType = typeof(Action<,>).MakeGenericType(typeof(T), propertyInfo.PropertyType);
 
 			var setter = propertyInfo.GetSetMethod()?.CreateDelegate(setType);
 

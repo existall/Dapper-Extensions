@@ -105,7 +105,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			if (!isSimpleType)
 			{
-				paramValues = XExtensions.GetObjectValues(id);
+				paramValues = ReflectionHelper.GetObjectValues(id);
 			}
 
 			foreach (var key in keys)
@@ -116,13 +116,13 @@ namespace ExistsForAll.DapperExtensions.Sql
 					value = paramValues[key.Name];
 				}
 
-				var predicateType = typeof(FieldPredicate<>).MakeGenericType(classMap.EntityType);
-
-				var fieldPredicate = Activator.CreateInstance(predicateType) as IFieldPredicate;
-				fieldPredicate.Not = false;
-				fieldPredicate.Operator = Operator.Eq;
-				fieldPredicate.PropertyName = key.Name;
-				fieldPredicate.Value = value;
+				var fieldPredicate = new FieldPredicate
+				{
+					Not = false,
+					Operator = Operator.Eq,
+					PropertyName = key.Name,
+					Value = value
+				};
 				predicates.Add(fieldPredicate);
 			}
 
@@ -148,10 +148,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		public static IPredicate GetEntityPredicate(this IClassMapper classMap, object entity)
 		{
-			var predicateType = typeof(FieldPredicate<>).MakeGenericType(classMap.EntityType);
+			var predicateType = typeof(FieldPredicate);
 			var predicates = new List<IPredicate>();
 
-			foreach (var kvp in XExtensions.GetObjectValues(entity))
+			foreach (var kvp in ReflectionHelper.GetObjectValues(entity))
 			{
 				var fieldPredicate = (IFieldPredicate)Activator.CreateInstance(predicateType);
 				fieldPredicate.Not = false;
@@ -177,7 +177,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			if (!keys.Any())
 				throw new ArgumentException("At least one Key column must be defined.");
 
-			var predicates = keys.Select(field => new FieldPredicate<T>
+			var predicates = keys.Select(field => new FieldPredicate
 				{
 					Not = false,
 					Operator = Operator.Eq,

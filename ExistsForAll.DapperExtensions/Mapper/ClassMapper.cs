@@ -96,7 +96,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// </summary>
 		protected PropertyMap Map<TOut>(Expression<Func<T, TOut>> expression)
 		{
-			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
 			return Map(propertyInfo, expression);
 		}
 
@@ -117,7 +117,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		/// <param name="expression"></param>
 		protected void UnMap<TOut>(Expression<Func<T, TOut>> expression)
 		{
-			var propertyInfo = ReflectionHelper<T>.GetProperty(expression) as PropertyInfo;
+			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
 
 			if (!Properties.Names.Contains(propertyInfo.Name))
 				throw new PropertyMapNotFoundException(propertyInfo.Name);

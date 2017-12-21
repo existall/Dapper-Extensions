@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
     public class OracleDialect : SqlDialectBase
     {
-        public OracleDialect() { }
-
-        public override string GetIdentitySql(string tableName)
+	    public override string GetIdentitySql(string tableName)
         {
-            throw new System.NotImplementedException("Oracle does not support get last inserted identity.");
+            throw new NotImplementedException("Oracle does not support get last inserted identity.");
         }
 
         public override bool SupportsMultipleStatements => false;
