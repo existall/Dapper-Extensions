@@ -33,7 +33,7 @@ namespace ExistsForAll.DapperExtensions
 
 		private void InitializeMapping(IEnumerable<Assembly> assemblies, Type mapperType)
 		{
-			Type[] types = assemblies.SelectMany(x => x.GetTypes()).ToArray();
+			var types = assemblies.SelectMany(x => x.GetTypes()).ToArray();
 
 			var fullName = typeof(IClassMapper<>).FullName;
 

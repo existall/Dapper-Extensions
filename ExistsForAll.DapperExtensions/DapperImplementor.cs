@@ -12,9 +12,9 @@ namespace ExistsForAll.DapperExtensions
 {
 	public class DapperImplementor : IDapperImplementor
 	{
-		private IClassMapperRepository ClassMappers { get; }
-		private IDapperExtensionsConfiguration Configuration { get; }
-		private ISqlGenerator SqlGenerator { get; }
+		protected IClassMapperRepository ClassMappers { get; }
+		protected IDapperExtensionsConfiguration Configuration { get; }
+		protected ISqlGenerator SqlGenerator { get; }
 
 		public DapperImplementor(ISqlGenerator sqlGenerator,
 			IClassMapperRepository classMappers,
@@ -273,7 +273,7 @@ namespace ExistsForAll.DapperExtensions
 			IList<ISort> sort,
 			IDbTransaction transaction,
 			int? commandTimeout,
-			bool buffered,IList<IProjection> projections) where T : class
+			bool buffered, IList<IProjection> projections) where T : class
 		{
 			var parameters = new Dictionary<string, object>();
 

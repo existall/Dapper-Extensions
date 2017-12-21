@@ -8,7 +8,7 @@ using ExistsForAll.DapperExtensions.Predicates;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
-	internal class SqlGenerator : ISqlGenerator
+	public class SqlGenerator : ISqlGenerator
 	{
 		private IDapperExtensionsConfiguration Configuration { get; }
 		private readonly ConcurrentDictionary<RuntimeTypeHandle,string> _selectCache = new ConcurrentDictionary<RuntimeTypeHandle, string>();
@@ -155,6 +155,11 @@ namespace ExistsForAll.DapperExtensions.Sql
 			});
 		}
 
+		public string Upsert(IClassMapper classMap)
+		{
+			throw new NotImplementedException();
+		}
+
 		public string Update(IClassMapper classMap,
 			IPredicate predicate,
 			IDictionary<string, object> parameters)
@@ -201,12 +206,12 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return classMap.IdentitySql(Configuration.Dialect);
 		}
 
-		private string GetTableName(IClassMapper map)
+		protected string GetTableName(IClassMapper map)
 		{
 			return map.GetTableName(Configuration.Dialect);
 		}
 
-		private string GetColumnName(IClassMapper map, IPropertyMap property, bool includeAlias)
+		protected string GetColumnName(IClassMapper map, IPropertyMap property, bool includeAlias)
 		{
 			string alias = null;
 			if (property.ColumnName != property.Name && includeAlias)
@@ -217,7 +222,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return Configuration.Dialect.GetColumnName(map.GetTableName(Configuration.Dialect), property.ColumnName, alias);
 		}
 
-		private string GetColumnName(IClassMapper map, string propertyName, bool includeAlias)
+		protected string GetColumnName(IClassMapper map, string propertyName, bool includeAlias)
 		{
 			var propertyMap = map.GetJoinedMapByName(propertyName);
 
@@ -227,7 +232,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return GetColumnName(map, propertyMap, includeAlias);
 		}
 
-		private string BuildSelectColumns(IClassMapper classMap, ICollection<IProjection> projections)
+		protected string BuildSelectColumns(IClassMapper classMap, ICollection<IProjection> projections)
 		{
 			var columns = classMap.Keys
 				.Concat(classMap.Properties.Where(x => !x.Ignored));
