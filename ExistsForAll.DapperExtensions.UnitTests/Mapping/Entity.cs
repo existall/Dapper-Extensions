@@ -9,4 +9,15 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 		public DateTime DateTime { get; set; }
 		public Guid Guid { get; set; }
 	}
+
+	public class EnumEntity : Entity<long>
+	{
+		public State Enum { get; set; }
+	}
+
+	public enum State
+	{
+		One,
+		Two
+	}
 }

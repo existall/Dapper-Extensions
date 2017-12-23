@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Data;
 using System.Reflection;
+using Dapper;
 
 namespace ExistsForAll.DapperExtensions.Mapper
 {
-
 	public class PropertyMap<T, TOut> : PropertyMap
 	{
 		private readonly Action<T, TOut> _setter;
 
-		public PropertyMap(PropertyInfo propertyInfo, Func<T, TOut> getter, Action<T, TOut> setter) 
+		public PropertyMap(PropertyInfo propertyInfo, Func<T, TOut> getter, Action<T, TOut> setter)
 			: base(propertyInfo)
 		{
 			_setter = setter;
-			Getter = o => getter((T) o);
+			Getter = o => getter((T)o);
 		}
 
 		public override void Setter(object entity, object value)
@@ -21,6 +22,15 @@ namespace ExistsForAll.DapperExtensions.Mapper
 				return;
 
 			_setter((T)entity, (TOut)value);
+		}
+
+		public override PropertyMap CustomMapper(ICustomsMapper customMapper)
+		{
+			var typeHandlerAdapter = new TypeHandlerAdapter(customMapper);
+
+			var type = typeof(TOut);
+			SqlMapper.AddTypeHandler(type, typeHandlerAdapter);
+			return this;
 		}
 	}
 
@@ -102,6 +112,67 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		{
 			Ignored = false;
 			return this;
+		}
+
+		public abstract PropertyMap CustomMapper(ICustomsMapper customMapper);
+	}
+
+	public interface ICustomsMapper
+	{
+		object FromDb(Type destinationType, object input);
+		object ToParameter(object input);
+	}
+
+	public class EnumCustomType : ICustomsMapper
+	{
+		public object FromDb(Type destinationType, object input)
+		{
+			return Enum.Parse(destinationType, (string)input, true);
+		}
+
+		public object ToParameter(object input)
+		{
+			return input.ToString();
+		}
+	}
+
+	internal class TypeHandlerAdapter : SqlMapper.ITypeHandler<Enum>
+	{
+		private readonly ICustomsMapper _customsMapper;
+
+		public TypeHandlerAdapter(ICustomsMapper customsMapper)
+		{
+			_customsMapper = customsMapper;
+		}
+
+		public void SetValue(IDbDataParameter parameter, object value)
+		{
+			parameter.Value = _customsMapper.ToParameter(value);
+		}
+
+		public object Parse(Type destinationType, object value)
+		{
+			return _customsMapper.FromDb(destinationType, value);
+		}
+	}
+
+	internal class TypeHandlerAdapter : SqlMapper.ITypeHandler
+	{
+		private readonly ICustomsMapper _customsMapper;
+
+		public TypeHandlerAdapter(ICustomsMapper customsMapper)
+		{
+			_customsMapper = customsMapper;
+		}
+
+		public void SetValue(IDbDataParameter parameter, object value)
+		{
+			parameter.Value = _customsMapper.ToParameter(value);
+		}
+
+		public object Parse(Type destinationType, object value)
+		{
+			return _customsMapper.FromDb(destinationType, value);
 		}
 	}
 }

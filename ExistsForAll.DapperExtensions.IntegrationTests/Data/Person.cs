@@ -12,6 +12,13 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 		public DateTime DateCreated { get; set; }
 		public bool Active { get; set; }
 		public IEnumerable<Phone> Phones { get; private set; }
+		public Sex Sex { get; set; }
+	}
+
+	public enum Sex
+	{
+		Male, 
+		Female
 	}
 
 	public class Phone
@@ -31,6 +38,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 			Map(x => x.LastName);
 			Map(x => x.DateCreated);
 			Map(x => x.Active);
+			Map(x => x.Sex).CustomMapper(new EnumCustomType());
 			Map(m => m.Phones).Ignore();
 		}
 	}

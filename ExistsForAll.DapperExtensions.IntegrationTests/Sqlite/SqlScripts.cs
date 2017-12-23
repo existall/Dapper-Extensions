@@ -27,7 +27,8 @@
     FirstName NVARCHAR(50),
     LastName NVARCHAR(50),
     DateCreated DATETIME,
-    Active BIT
+    Active BIT,
+	Sex NVARCHAR(50)
 )";
 
 		public static string Animal = @"CREATE TABLE Animal (
