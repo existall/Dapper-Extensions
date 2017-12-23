@@ -13,7 +13,15 @@ namespace ExistsForAll.DapperExtensions.Mapper
 			: base(propertyInfo)
 		{
 			_setter = setter;
-			Getter = o => getter((T)o);
+
+			if (typeof(TOut).GetTypeInfo().IsEnum)
+			{
+				Getter = o => getter((T)o).ToString();
+			}
+			else
+			{
+				Getter = o => getter((T)o);
+			}
 		}
 
 		public override void Setter(object entity, object value)
@@ -28,7 +36,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		{
 			var typeHandlerAdapter = new TypeHandlerAdapter(customMapper);
 
-			var type = typeof(TOut);
+			var type = typeof(Enum);
 			SqlMapper.AddTypeHandler(type, typeHandlerAdapter);
 			return this;
 		}
@@ -117,62 +125,4 @@ namespace ExistsForAll.DapperExtensions.Mapper
 		public abstract PropertyMap CustomMapper(ICustomsMapper customMapper);
 	}
 
-	public interface ICustomsMapper
-	{
-		object FromDb(Type destinationType, object input);
-		object ToParameter(object input);
-	}
-
-	public class EnumCustomType : ICustomsMapper
-	{
-		public object FromDb(Type destinationType, object input)
-		{
-			return Enum.Parse(destinationType, (string)input, true);
-		}
-
-		public object ToParameter(object input)
-		{
-			return input.ToString();
-		}
-	}
-
-	internal class TypeHandlerAdapter : SqlMapper.ITypeHandler<Enum>
-	{
-		private readonly ICustomsMapper _customsMapper;
-
-		public TypeHandlerAdapter(ICustomsMapper customsMapper)
-		{
-			_customsMapper = customsMapper;
-		}
-
-		public void SetValue(IDbDataParameter parameter, object value)
-		{
-			parameter.Value = _customsMapper.ToParameter(value);
-		}
-
-		public object Parse(Type destinationType, object value)
-		{
-			return _customsMapper.FromDb(destinationType, value);
-		}
-	}
-
-	internal class TypeHandlerAdapter : SqlMapper.ITypeHandler
-	{
-		private readonly ICustomsMapper _customsMapper;
-
-		public TypeHandlerAdapter(ICustomsMapper customsMapper)
-		{
-			_customsMapper = customsMapper;
-		}
-
-		public void SetValue(IDbDataParameter parameter, object value)
-		{
-			parameter.Value = _customsMapper.ToParameter(value);
-		}
-
-		public object Parse(Type destinationType, object value)
-		{
-			return _customsMapper.FromDb(destinationType, value);
-		}
-	}
 }

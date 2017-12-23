@@ -38,7 +38,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 			Map(x => x.LastName);
 			Map(x => x.DateCreated);
 			Map(x => x.Active);
-			Map(x => x.Sex).CustomMapper(new EnumCustomType());
+			Map(x => x.Sex);
 			Map(m => m.Phones).Ignore();
 		}
 	}

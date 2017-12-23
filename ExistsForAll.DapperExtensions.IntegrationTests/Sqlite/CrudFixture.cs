@@ -16,8 +16,10 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void AddsEntityToDatabase_ReturnsKey()
 			{
-				Person p = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
+				Person p = new Person { Active = true,
+					FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow, Sex = Sex.Female};
 				Db.Insert(p);
+				var person = Db.Get<Person>(1);
 				Assert.AreEqual(1, p.Id);
 			}
 

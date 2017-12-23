@@ -155,11 +155,6 @@ namespace ExistsForAll.DapperExtensions.Sql
 			});
 		}
 
-		public string Upsert(IClassMapper classMap)
-		{
-			throw new NotImplementedException();
-		}
-
 		public string Update(IClassMapper classMap,
 			IPredicate predicate,
 			IDictionary<string, object> parameters)

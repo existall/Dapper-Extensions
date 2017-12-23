@@ -10,7 +10,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Mapping
 			Map(x => x.String);
 			Map(x => x.DateTime);
 			Map(x => x.Guid);
-			Map(x => x.Enum).CustomMapper(new EnumCustomType());
+			Map(x => x.Enum);
 		}
 	}
 }

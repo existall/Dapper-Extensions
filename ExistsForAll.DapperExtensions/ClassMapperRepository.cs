@@ -42,10 +42,6 @@ namespace ExistsForAll.DapperExtensions
 				.Where(t => t.Interface != null)
 				.ToArray();
 
-			//var types = assemblies
-			//	.SelectMany(x => x.GetTypes())
-			//	.Where(x => typeof(IClassMapper).IsAssignableFrom(x));
-
 			foreach (var type in enumerable)
 			{
 				var local = type;
