@@ -4,7 +4,8 @@
 	{
 		public static string Car = @"CREATE TABLE Car (
     Id NVARCHAR(15) PRIMARY KEY,
-    Name NVARCHAR(50)
+    Name NVARCHAR(50),
+	Hand INTEGER NOT NULL
 )";
 
 		public static string Foo = @"CREATE TABLE FooTable (

@@ -15,6 +15,8 @@ namespace ExistsForAll.DapperExtensions.Sql
 		string Update(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 		string Delete(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
+		string AtomicIncrement(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters, IProjection projection, int amount);
+
 		string IdentitySql(IClassMapper map);
 		bool SupportsMultipleStatements();
 	}

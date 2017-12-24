@@ -36,5 +36,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests
 		int Count<T>(object predicate, int? commandTimeout = null) where T : class;
 		IMultipleResultReader GetMultiple(GetMultiplePredicate predicate, IDbTransaction transaction, int? commandTimeout = null);
 		IMultipleResultReader GetMultiple(GetMultiplePredicate predicate, int? commandTimeout = null);
+
+		int AtomicIncrement<T>(object predicate, IProjection projection, int amount, IDbTransaction transaction,
+			int? commandTimeout) where T : class;
+		int AtomicIncrement<T>(object predicate, IProjection projection, int amount, int? commandTimeout) where T : class;
 	}
 }

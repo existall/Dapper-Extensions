@@ -204,5 +204,15 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests
 		{
 			return _dapper.GetMultiple(Connection, predicate, _transaction, commandTimeout);
 		}
+
+		public int AtomicIncrement<T>(object predicate, IProjection projection, int amount, IDbTransaction transaction, int? commandTimeout) where T : class
+		{
+			return _dapper.AtomicIncrement<T>(Connection, predicate, projection, amount, transaction, commandTimeout);
+		}
+
+		public int AtomicIncrement<T>(object predicate, IProjection projection, int amount, int? commandTimeout) where T : class
+		{
+			return _dapper.AtomicIncrement<T>(Connection, predicate, projection, amount, _transaction, commandTimeout);
+		}
 	}
 }

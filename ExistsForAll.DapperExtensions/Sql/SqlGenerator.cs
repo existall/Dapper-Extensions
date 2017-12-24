@@ -191,6 +191,15 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return sql.ToString();
 		}
 
+		public string AtomicIncrement(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters, IProjection projection, int amount)
+		{
+			var context = new SqlGenerationContext(Configuration.Dialect, map);
+
+			var column = GetColumnName(map,projection.PropertyName, false);
+
+			return $"UPDATE {GetTableName(map)} SET {column} = {column} + {amount} WHERE {predicate.GetSql(context, parameters)}";
+		}
+
 		public virtual bool SupportsMultipleStatements()
 		{
 			return Configuration.Dialect.SupportsMultipleStatements;

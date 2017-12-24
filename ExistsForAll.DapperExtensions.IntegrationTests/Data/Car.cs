@@ -6,8 +6,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
 	{
 		public CarMapper()
 		{
-			Key(x => x.Id);
+			Key(x => x.Id).GeneratedBy.Assigned();
 			Map(x => x.Name);
+			Map(x => x.Hand);
 		}
 	} 
 
@@ -15,5 +16,6 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Data
     {
         public string Id { get; set; }
         public string Name { get; set; }
+	    public int Hand { get; set; }
     }
 }

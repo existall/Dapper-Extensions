@@ -16,8 +16,14 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void AddsEntityToDatabase_ReturnsKey()
 			{
-				Person p = new Person { Active = true,
-					FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow, Sex = Sex.Female};
+				Person p = new Person
+				{
+					Active = true,
+					FirstName = "Foo",
+					LastName = "Bar",
+					DateCreated = DateTime.UtcNow,
+					Sex = Sex.Female
+				};
 				Db.Insert(p);
 				var person = Db.Get<Person>(1);
 				Assert.AreEqual(1, p.Id);
@@ -507,6 +513,29 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Assert.AreEqual(4, people.Count);
 			Assert.AreEqual(2, animals.Count);
 			Assert.AreEqual(1, people2.Count);
+		}
+	}
+
+
+	[TestFixture]
+	public class AtomicIncrementMethod : SqliteBaseFixture
+	{
+		[Test]
+		public void ReturnsItems()
+		{
+			const int amount = 2;
+
+			var car = new Car { Hand = 0, Name = "Car", Id = "Id" };
+
+			Db.Insert(car);
+
+			var fieldPredicate = Predicates.Predicates.Field<Car>(x => x.Id, Operator.Eq, car.Id);
+			var projection = Predicates.Predicates.Projection<Car>(x => x.Hand);
+			Db.AtomicIncrement<Car>(fieldPredicate, projection, amount, null);
+
+			var result = Db.Get<Car>(car.Id);
+
+			Assert.AreEqual(result.Hand, car.Hand + amount);
 		}
 	}
 }

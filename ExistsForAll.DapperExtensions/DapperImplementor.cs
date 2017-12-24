@@ -274,6 +274,27 @@ namespace ExistsForAll.DapperExtensions
 			return GetMultipleBySequence(connection, predicate, transaction, commandTimeout);
 		}
 
+		public int AtomicIncrement<T>(IDbConnection connection,
+			object predicate,
+			IProjection projection,
+			int amount,
+			IDbTransaction dbTransaction,
+			int? commandTimeout) where T : class
+		{
+			var classMap = ClassMappers.GetMap<T>();
+			var wherePredicate = classMap.GetPredicate(predicate);
+			var parameters = new Dictionary<string, object>();
+
+			var target = classMap.GetPropertyMapByName(projection.PropertyName);
+
+			if(target.Ignored || target.IsReadOnly)
+				throw new InvalidOperationException($"Atomic increment is not allowed on {projection.PropertyName} for type {classMap.EntityType}. It's either ignored or read only");
+			
+			var sql = SqlGenerator.AtomicIncrement(classMap, wherePredicate, parameters, projection, amount);
+
+			return connection.Execute(sql, parameters, dbTransaction, commandTimeout, CommandType.Text);
+		}
+
 		protected IEnumerable<T> GetList<T>(IDbConnection connection,
 			IClassMapper classMap,
 			IPredicate predicate,

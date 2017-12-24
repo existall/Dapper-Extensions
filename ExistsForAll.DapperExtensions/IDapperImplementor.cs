@@ -17,5 +17,9 @@ namespace ExistsForAll.DapperExtensions
 		IEnumerable<T> GetSet<T>(IDbConnection connection, object predicate, IList<ISort> sort, int firstResult, int maxResults, IDbTransaction transaction, int? commandTimeout, bool buffered, IList<IProjection> projections = null) where T : class;
 		int Count<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
 		IMultipleResultReader GetMultiple(IDbConnection connection, GetMultiplePredicate predicate, IDbTransaction transaction, int? commandTimeout);
+
+		int AtomicIncrement<T>(IDbConnection connection, object predicate, IProjection projection, int amount,
+			IDbTransaction dbTransaction,
+			int? commandTimeout) where T : class;
 	}
 }
