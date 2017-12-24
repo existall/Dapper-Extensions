@@ -20,7 +20,7 @@ namespace ExistsForAll.DapperExtensions.Mapper
 
 		public object Parse(Type destinationType, object value)
 		{
-			return _customsMapper.FromDatabase(destinationType, value);
+			return value is DBNull ? null : _customsMapper.FromDatabase(destinationType, value);
 		}
 	}
 }
