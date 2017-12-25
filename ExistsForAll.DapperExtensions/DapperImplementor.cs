@@ -281,14 +281,17 @@ namespace ExistsForAll.DapperExtensions
 			IDbTransaction dbTransaction,
 			int? commandTimeout) where T : class
 		{
-			var classMap = ClassMappers.GetMap<T>();
-			var wherePredicate = classMap.GetPredicate(predicate);
-			var parameters = new Dictionary<string, object>();
+			Guard.ArgumentNull(projection, nameof(projection));
+			Guard.ArgumentNull(predicate, nameof(predicate));
 
+			var classMap = ClassMappers.GetMap<T>();
 			var target = classMap.GetPropertyMapByName(projection.PropertyName);
 
-			if(target.Ignored || target.IsReadOnly)
+			if (target.Ignored || target.IsReadOnly)
 				throw new InvalidOperationException($"Atomic increment is not allowed on {projection.PropertyName} for type {classMap.EntityType}. It's either ignored or read only");
+
+			var wherePredicate = classMap.GetPredicate(predicate);
+			var parameters = new Dictionary<string, object>();
 			
 			var sql = SqlGenerator.AtomicIncrement(classMap, wherePredicate, parameters, projection, amount);
 

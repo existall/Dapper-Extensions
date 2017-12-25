@@ -5,7 +5,7 @@
 		public IDapperImplementor DapperImplementor { get; }
 		public IDapperAsyncImplementor DapperAsyncImplementor { get; }
 
-		public DapperInstances(DapperImplementor dapperImplementor, IDapperAsyncImplementor dapperAsyncImplementor)
+		public DapperInstances(IDapperImplementor dapperImplementor, IDapperAsyncImplementor dapperAsyncImplementor)
 		{
 			DapperImplementor = dapperImplementor;
 			DapperAsyncImplementor = dapperAsyncImplementor;
