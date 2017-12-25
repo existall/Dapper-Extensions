@@ -179,6 +179,17 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return $"UPDATE {GetTableName(classMap)} SET {setSql} WHERE {predicate.GetSql(context, parameters)}";
 		}
 
+		public string Update(IClassMapper classMap, object predicate, IList<IProjectionSet> projectionSets, Dictionary<string, object> parameters)
+		{
+			Guard.ArgumentNull(predicate, nameof(predicate));
+			Guard.ArgumentNull(projectionSets, nameof(projectionSets));
+			Guard.ArgumentNull(parameters, nameof(parameters));
+
+			var context = new SqlGenerationContext(Configuration.Dialect, classMap);
+
+			return null;
+		}
+
 		public string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(predicate, nameof(predicate));

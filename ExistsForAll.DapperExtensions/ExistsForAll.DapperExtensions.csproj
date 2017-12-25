@@ -18,4 +18,10 @@
 		<PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="System.IO.Compression.FileSystem">
+	    <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2\System.IO.Compression.FileSystem.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>

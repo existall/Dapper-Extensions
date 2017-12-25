@@ -204,7 +204,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var mapper = GetClassMapper();
 
-			var projection = Predicates.Predicates.Projection<IntEntity>(x => x.String);
+			var projection = Projections.Projection<IntEntity>(x => x.String);
 
 			var projections = new List<IProjection>(){ projection };
 

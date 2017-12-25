@@ -119,11 +119,5 @@ namespace ExistsForAll.DapperExtensions.Predicates
 			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
 			return new InPredicate<T>(collection, propertyInfo.Name, not);
 		}
-
-		public static IProjection Projection<T>(Expression<Func<T, object>> expression)
-		{
-			var propertyInfo = ReflectionHelper.GetProperty(expression) as PropertyInfo;
-			return new Projection(propertyInfo.Name);
-		}
 	}
 }

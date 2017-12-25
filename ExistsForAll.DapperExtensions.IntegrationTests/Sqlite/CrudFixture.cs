@@ -302,7 +302,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			{
 				Db.Insert(new Person { Active = true, FirstName = "a", LastName = "a1", DateCreated = DateTime.UtcNow.AddDays(-10) });
 
-				var projections = new List<IProjection> { Predicates.Predicates.Projection<Person>(x => x.FirstName) };
+				var projections = new List<IProjection> { Projections.Projection<Person>(x => x.FirstName) };
 
 				var results = Db.GetList<Person>(projections: projections);
 
@@ -530,7 +530,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Db.Insert(car);
 
 			var fieldPredicate = Predicates.Predicates.Field<Car>(x => x.Id, Operator.Eq, car.Id);
-			var projection = Predicates.Predicates.Projection<Car>(x => x.Hand);
+			var projection = Projections.Projection<Car>(x => x.Hand);
 			Db.AtomicIncrement<Car>(fieldPredicate, projection, amount, null);
 
 			var result = Db.Get<Car>(car.Id);
