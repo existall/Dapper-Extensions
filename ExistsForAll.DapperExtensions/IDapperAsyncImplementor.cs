@@ -51,5 +51,12 @@ namespace ExistsForAll.DapperExtensions
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Delete{T}(IDbConnection, object, IDbTransaction, int?)"/>.
 		/// </summary>
 		Task<bool> DeleteAsync<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
+
+		Task<int> AtomicIncrementAsync<T>(IDbConnection connection,
+			object predicate,
+			IProjection projection,
+			int amount,
+			IDbTransaction dbTransaction,
+			int? commandTimeout) where T : class;
 	}
 }
