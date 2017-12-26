@@ -235,6 +235,34 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Assert.AreEqual(false, p3.Active);
 			}
 
+			[Test]
+			public void Update_WhenPartialUpdate_ShouldOnlyUpdateThePropertyUsed()
+			{
+				Person p1 = new Person
+				{
+					Active = true,
+					FirstName = "Foo",
+					LastName = "Bar",
+					DateCreated = DateTime.UtcNow
+				};
+
+				Db.Insert(p1);
+
+				var id = p1.Id;
+
+				var idPredicate = Predicates.Predicates.Field<Person>(x => x.Id, Operator.Eq, id);
+				var projectionSet = Projections.Set<Person>(x => x.FirstName, "FooBar");
+				var list = new List<IProjectionSet>() { projectionSet };
+
+				Db.Update<Person>(idPredicate, list, null, false);
+
+				var p2 = Db.Get<Person>(id);
+
+				Assert.AreEqual("FooBar", p2.FirstName);
+				Assert.AreEqual(p1.LastName, p2.LastName);
+				Assert.AreEqual(p1.Active, p2.Active);
+			}
+
 			//[Test]
 			//[Ignore] //TODO: multikey identity
 			//public void UsingCompositeKey_UpdatesEntity()

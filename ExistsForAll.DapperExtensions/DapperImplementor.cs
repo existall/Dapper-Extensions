@@ -182,12 +182,6 @@ namespace ExistsForAll.DapperExtensions
 			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
-		public bool Update<T>(IDbConnection connection, object predicate, IList<IProjectionSet> projectionSets, IDbTransaction transaction,
-			int? commandTimeout) where T : class
-		{
-			throw new NotImplementedException();
-		}
-
 		public bool Update<T>(IDbConnection connection,
 			IPredicate predicate,
 			IList<IProjectionSet> projectionSets,
@@ -199,7 +193,12 @@ namespace ExistsForAll.DapperExtensions
 			var dynamicParameters = new DynamicParameters();
 
 			var sql = SqlGenerator.Update(classMap, predicate, projectionSets, parameters);
-			
+
+			foreach (var parameter in parameters)
+			{
+				dynamicParameters.Add(parameter.Key, parameter.Value);
+			}
+
 			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
@@ -313,7 +312,7 @@ namespace ExistsForAll.DapperExtensions
 
 			var wherePredicate = classMap.GetPredicate(predicate);
 			var parameters = new Dictionary<string, object>();
-			
+
 			var sql = SqlGenerator.AtomicIncrement(classMap, wherePredicate, parameters, projection, amount);
 
 			return connection.Execute(sql, parameters, dbTransaction, commandTimeout, CommandType.Text);

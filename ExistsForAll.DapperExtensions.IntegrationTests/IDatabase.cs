@@ -22,6 +22,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests
 		void Insert<T>(T entity, int? commandTimeout = null) where T : class;
 		bool Update<T>(T entity, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
 		bool Update<T>(T entity, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
+
+		bool Update<T>(IPredicate predicate, IList<IProjectionSet> projectionSets, int? commandTimeout,
+			bool ignoreAllKeyProperties) where T : class;
 		bool Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
 		bool Delete<T>(T entity, int? commandTimeout = null) where T : class;
 		bool Delete<T>(object predicate, IDbTransaction transaction, int? commandTimeout = null) where T : class;

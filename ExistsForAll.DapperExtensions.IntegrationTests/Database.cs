@@ -135,6 +135,11 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests
 			return _dapper.Update(Connection, entity, _transaction, commandTimeout);
 		}
 
+		public bool Update<T>(IPredicate predicate, IList<IProjectionSet> projectionSets, int? commandTimeout, bool ignoreAllKeyProperties) where T : class
+		{
+			return _dapper.Update<T>(Connection, predicate, projectionSets, _transaction, commandTimeout);
+		}
+
 		public bool Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout) where T : class
 		{
 			return _dapper.Delete(Connection, entity, transaction, commandTimeout);

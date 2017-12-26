@@ -13,7 +13,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 		string Insert(IClassMapper map);
 		string Update(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
-		string Update(IClassMapper classMap, object predicate, IList<IProjectionSet> projectionSets, Dictionary<string, object> parameters);
+		string Update(IClassMapper classMap, IPredicate predicate, IList<IProjectionSet> projectionSets, Dictionary<string, object> parameters);
 		string Delete(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters);
 
 		string AtomicIncrement(IClassMapper map, IPredicate predicate, IDictionary<string, object> parameters, IProjection projection, int amount);
