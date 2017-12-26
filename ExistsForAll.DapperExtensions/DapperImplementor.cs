@@ -182,8 +182,14 @@ namespace ExistsForAll.DapperExtensions
 			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
+		public bool Update<T>(IDbConnection connection, object predicate, IList<IProjectionSet> projectionSets, IDbTransaction transaction,
+			int? commandTimeout) where T : class
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool Update<T>(IDbConnection connection,
-			object predicate,
+			IPredicate predicate,
 			IList<IProjectionSet> projectionSets,
 			IDbTransaction transaction,
 			int? commandTimeout) where T : class
@@ -192,23 +198,9 @@ namespace ExistsForAll.DapperExtensions
 			var parameters = new Dictionary<string, object>();
 			var dynamicParameters = new DynamicParameters();
 
-			var updateSets = projectionSets.Select(x => new {PropertyMap = classMap.GetJoinedMapByName(x.PropertyName), Value = x.Value})
-				.ToArray();
-
-			foreach (var property in updateSets)
-			{
-				if(property.PropertyMap.Ignored || property.PropertyMap.Ignored)
-
-					dynamicParameters.Add(property.PropertyMap., property.Value);
-			}
-
-			foreach (var parameter in parameters)
-			{
-				dynamicParameters.Add(parameter.Key, parameter.Value);
-			}
-
 			var sql = SqlGenerator.Update(classMap, predicate, projectionSets, parameters);
-			return true;
+			
+			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
 		public bool Delete<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout)

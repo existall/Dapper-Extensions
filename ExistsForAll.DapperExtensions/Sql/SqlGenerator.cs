@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Predicates;
@@ -179,7 +180,10 @@ namespace ExistsForAll.DapperExtensions.Sql
 			return $"UPDATE {GetTableName(classMap)} SET {setSql} WHERE {predicate.GetSql(context, parameters)}";
 		}
 
-		public string Update(IClassMapper classMap, object predicate, IList<IProjectionSet> projectionSets, Dictionary<string, object> parameters)
+		public string Update(IClassMapper classMap,
+			IPredicate predicate,
+			IList<IProjectionSet> projectionSets,
+			Dictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(predicate, nameof(predicate));
 			Guard.ArgumentNull(projectionSets, nameof(projectionSets));
@@ -187,9 +191,25 @@ namespace ExistsForAll.DapperExtensions.Sql
 
 			var context = new SqlGenerationContext(Configuration.Dialect, classMap);
 
-			return null;
+			var setSql = projectionSets.Select(x => GetUpdateParameterSql(classMap, x, parameters));
+			
+			return $"UPDATE {GetTableName(classMap)} SET {string.Join(", ", setSql)} WHERE {predicate.GetSql(context, parameters)}";
 		}
 
+		private string GetUpdateParameterSql(IClassMapper classMapper, IProjectionSet projectionSet, IDictionary<string, object> parameters)
+		{
+			var propertyMap = classMapper.GetJoinedMapByName(projectionSet.PropertyName);
+			
+			if(propertyMap.Ignored || propertyMap.IsReadOnly)
+				throw new InvalidOperationException($"Update is not allowed for ignored or readonly property [{propertyMap.Name}]");
+			
+			var paramName = $"{Configuration.Dialect.ParameterPrefix}{propertyMap.Name}";
+			
+			parameters.Add(paramName, projectionSet.Value);
+
+			return  $"{classMapper.GetColumnName(propertyMap,Configuration.Dialect,false)} = {paramName}"; 
+		}
+		
 		public string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
 		{
 			Guard.ArgumentNull(predicate, nameof(predicate));
