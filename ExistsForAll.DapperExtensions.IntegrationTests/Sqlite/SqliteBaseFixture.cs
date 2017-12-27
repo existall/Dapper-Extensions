@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Dapper;
+using Microsoft.Data.Sqlite;
 using ExistsForAll.DapperExtensions.Sql;
 using NUnit.Framework;
 
@@ -30,7 +30,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
                 File.Delete(file);
             }
 
-            SQLiteConnection connection = new SQLiteConnection(connectionString);
+            var connection = new SqliteConnection(connectionString);
 
 	        var config = new DapperExtensionsConfiguration
 	        {

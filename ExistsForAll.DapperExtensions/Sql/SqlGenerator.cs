@@ -10,7 +10,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 {
 	public class SqlGenerator : ISqlGenerator
 	{
-		private IDapperExtensionsConfiguration Configuration { get; }
+		protected IDapperExtensionsConfiguration Configuration { get; }
 		private readonly ConcurrentDictionary<RuntimeTypeHandle,string> _selectCache = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 		private readonly ConcurrentDictionary<RuntimeTypeHandle, string> _insertCache = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 		private readonly ConcurrentDictionary<RuntimeTypeHandle, string> _updateCache = new ConcurrentDictionary<RuntimeTypeHandle, string>();
@@ -139,7 +139,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 		{
 			return _insertCache.GetOrAdd(classMap.EntityType.TypeHandle, x =>
 			{
-				var columns = classMap.GetMutableColumns();
+				var columns = classMap.GetNotIgnoredColumns();
 
 				if (!columns.Any())
 					throw new ArgumentException("No columns were mapped.");
@@ -277,7 +277,7 @@ namespace ExistsForAll.DapperExtensions.Sql
 				columns = columns.Where(c => projectedProperties.Contains(c.PropertyInfo.Name));
 			}
 
-			return string.Join(", ", columns.Select(x => GetColumnName(classMap, x, true)));
+			return string.Join(", ", columns.Select(x => GetColumnName(classMap, x, false)));
 		}
 	}
 }

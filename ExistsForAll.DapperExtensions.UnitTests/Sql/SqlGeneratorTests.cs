@@ -10,10 +10,12 @@ using Xunit;
 
 namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 {
+	
+	
 	public class SqlGeneratorTests
 	{
 		private const string BaseSql = "SELECT Id, String, DateTime, Guid FROM table";
-
+		
 		[Fact]
 		public void Select_WhenHaveNoPredicate_ShouldReturnSelectStatement()
 		{

@@ -93,6 +93,13 @@ namespace ExistsForAll.DapperExtensions.Sql
 				.ToArray();
 		}
 
+		public static IPropertyMap[] GetNotIgnoredColumns(this IClassMapper classMapper)
+		{
+			return classMapper.Keys.Where(p => !p.Ignored)
+				.Concat(classMapper.Properties.Where(x => !x.Ignored))
+				.ToArray();
+		}
+		
 		public static IPredicate GetIdPredicate(this IClassMapper classMap, object id)
 		{
 			var isSimpleType = id.GetType().IsSimpleType();
