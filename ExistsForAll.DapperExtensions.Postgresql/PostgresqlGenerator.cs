@@ -1,11 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Schema;
 using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions.Postgresql
 {
+	public class DapperExtensionsBuilder
+	{
+		public DapperInstances BuildImplementor(IEnumerable<Assembly> assemblies, IDapperExtensionsConfiguration configuration)
+		{
+			// verify configuration;
+
+			var repository = new ClassMapperRepository();
+			repository.Initialize(assemblies, configuration.DefaultMapper);
+			var sqlGenerator = new SqlGenerator(configuration);
+
+			var dapperImplementor = new DapperImplementor(sqlGenerator, repository, configuration);
+			var dapperAsyncImplementor = new DapperAsyncImplementor(sqlGenerator, repository, configuration);
+			return new DapperInstances(dapperImplementor, dapperAsyncImplementor);
+		}
+	}
+	
 	public class PostgresqlGenerator : SqlGenerator, IPostgresqlGenerator
 	{
 		public PostgresqlGenerator(IDapperExtensionsConfiguration configuration)
