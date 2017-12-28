@@ -16,7 +16,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void AddsEntityToDatabase_ReturnsKey()
 			{
-				Person p = new Person
+				var p = new Person
 				{
 					Active = true,
 					FirstName = "Foo",
@@ -42,7 +42,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void AddsEntityToDatabase_ReturnsGeneratedPrimaryKey()
 			{
-				Animal a1 = new Animal { Name = "Foo" };
+				var a1 = new Animal { Name = "Foo" };
 
 				Db.Insert(a1);
 
@@ -55,7 +55,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			public void AddsEntityToDatabase_WithPassedInGuid()
 			{
 				var guid = Guid.NewGuid();
-				Animal a1 = new Animal { Id = guid, Name = "Foo" };
+				var a1 = new Animal { Id = guid, Name = "Foo" };
 				Db.Insert(a1);
 
 				var a2 = Db.Get<Animal>(a1.Id);
@@ -66,9 +66,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void AddsMultipleEntitiesToDatabase()
 			{
-				Animal a1 = new Animal { Name = "Foo" };
-				Animal a2 = new Animal { Name = "Bar" };
-				Animal a3 = new Animal { Name = "Baz" };
+				var a1 = new Animal { Name = "Foo" };
+				var a2 = new Animal { Name = "Bar" };
+				var a3 = new Animal { Name = "Baz" };
 
 				Db.Insert<Animal>(new[] { a1, a2, a3 });
 
@@ -80,11 +80,11 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			public void AddsMultipleEntitiesToDatabase_WithPassedInGuid()
 			{
 				var guid1 = Guid.NewGuid();
-				Animal a1 = new Animal { Id = guid1, Name = "Foo" };
+				var a1 = new Animal { Id = guid1, Name = "Foo" };
 				var guid2 = Guid.NewGuid();
-				Animal a2 = new Animal { Id = guid2, Name = "Bar" };
+				var a2 = new Animal { Id = guid2, Name = "Bar" };
 				var guid3 = Guid.NewGuid();
-				Animal a3 = new Animal { Id = guid3, Name = "Baz" };
+				var a3 = new Animal { Id = guid3, Name = "Baz" };
 
 				Db.Insert<Animal>(new[] { a1, a2, a3 });
 
@@ -102,7 +102,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void UsingKey_ReturnsEntity()
 			{
-				Person p1 = new Person
+				var p1 = new Person
 				{
 					Active = true,
 					FirstName = "Foo",
@@ -111,7 +111,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				};
 				Db.Insert(p1);
 
-				Person p2 = Db.Get<Person>(p1.Id);
+				var p2 = Db.Get<Person>(p1.Id);
 				Assert.AreEqual(p1.Id, p2.Id);
 				Assert.AreEqual("Foo", p2.FirstName);
 				Assert.AreEqual("Bar", p2.LastName);
@@ -121,10 +121,10 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			//TODO: multikey identity
 			public void UsingCompositeKey_ReturnsEntity()
 			{
-				Multikey m1 = new Multikey { Key1 = 1, Key2 = "key", Value = "bar" };
+				var m1 = new Multikey { Key1 = 1, Key2 = "key", Value = "bar" };
 				Db.Insert(m1);
 
-				Multikey m2 = Db.Get<Multikey>(new { m1.Key1, m1.Key2 });
+				var m2 = Db.Get<Multikey>(new { m1.Key1, m1.Key2 });
 				Assert.AreEqual(1, m2.Key1);
 				Assert.AreEqual("key", m2.Key2);
 				Assert.AreEqual("bar", m2.Value);
@@ -137,7 +137,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void UsingKey_DeletesFromDatabase()
 			{
-				Person p1 = new Person
+				var p1 = new Person
 				{
 					Active = true,
 					FirstName = "Foo",
@@ -147,7 +147,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Db.Insert(p1);
 				var id = p1.Id;
 
-				Person p2 = Db.Get<Person>(id);
+				var p2 = Db.Get<Person>(id);
 				Db.Delete(p2);
 				Assert.IsNull(Db.Get<Person>(id));
 			}
@@ -167,9 +167,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void UsingPredicate_DeletesRows()
 			{
-				Person p1 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
-				Person p2 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
-				Person p3 = new Person { Active = true, FirstName = "Foo", LastName = "Barz", DateCreated = DateTime.UtcNow };
+				var p1 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
+				var p2 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
+				var p3 = new Person { Active = true, FirstName = "Foo", LastName = "Barz", DateCreated = DateTime.UtcNow };
 				Db.Insert(p1);
 				Db.Insert(p2);
 				Db.Insert(p3);
@@ -188,9 +188,9 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void UsingObject_DeletesRows()
 			{
-				Person p1 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
-				Person p2 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
-				Person p3 = new Person { Active = true, FirstName = "Foo", LastName = "Barz", DateCreated = DateTime.UtcNow };
+				var p1 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
+				var p2 = new Person { Active = true, FirstName = "Foo", LastName = "Bar", DateCreated = DateTime.UtcNow };
+				var p3 = new Person { Active = true, FirstName = "Foo", LastName = "Barz", DateCreated = DateTime.UtcNow };
 				Db.Insert(p1);
 				Db.Insert(p2);
 				Db.Insert(p3);
@@ -212,7 +212,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void UsingKey_UpdatesEntity()
 			{
-				Person p1 = new Person
+				var p1 = new Person
 				{
 					Active = true,
 					FirstName = "Foo",
@@ -238,7 +238,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			[Test]
 			public void Update_WhenPartialUpdate_ShouldOnlyUpdateThePropertyUsed()
 			{
-				Person p1 = new Person
+				var p1 = new Person
 				{
 					Active = true,
 					FirstName = "Foo",
@@ -293,7 +293,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow });
 				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
-				IEnumerable<Person> list = Db.GetList<Person>();
+				var list = Db.GetList<Person>();
 				Assert.AreEqual(4, list.Count());
 			}
 
@@ -306,7 +306,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
 				var predicate = Predicates.Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
-				IEnumerable<Person> list = Db.GetList<Person>(predicate, null);
+				var list = Db.GetList<Person>(predicate, null);
 				Assert.AreEqual(2, list.Count());
 				Assert.IsTrue(list.All(p => p.FirstName == "a" || p.FirstName == "c"));
 			}
@@ -320,7 +320,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 				Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
 				var predicate = new { Active = true, FirstName = "c" };
-				IEnumerable<Person> list = Db.GetList<Person>(predicate, null);
+				var list = Db.GetList<Person>(predicate, null);
 				Assert.AreEqual(1, list.Count());
 				Assert.IsTrue(list.All(p => p.FirstName == "c"));
 			}
@@ -389,7 +389,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
-			IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 0, 2);
+			var list = Db.GetPage<Person>(null, sort, 0, 2);
 			Assert.AreEqual(2, list.Count());
 			Assert.AreEqual(p2.Id, list.First().Id);
 			Assert.AreEqual(p1.Id, list.Skip(1).First().Id);
@@ -415,7 +415,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
-			IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
+			var list = Db.GetPage<Person>(predicate, sort, 0, 3);
 			Assert.AreEqual(2, list.Count());
 			Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
 		}
@@ -439,7 +439,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
-			IEnumerable<Person> list = Db.GetPage<Person>(null, sort, 1, 2);
+			var list = Db.GetPage<Person>(null, sort, 1, 2);
 			Assert.AreEqual(2, list.Count());
 			Assert.AreEqual(p4.Id, list.First().Id);
 			Assert.AreEqual(p3.Id, list.Skip(1).First().Id);
@@ -465,7 +465,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 										Predicates.Predicates.Sort<Person>(p => p.FirstName)
 									};
 
-			IEnumerable<Person> list = Db.GetPage<Person>(predicate, sort, 0, 3);
+			var list = Db.GetPage<Person>(predicate, sort, 0, 3);
 			Assert.AreEqual(2, list.Count());
 			Assert.IsTrue(list.All(p => p.FirstName == "Sigma" || p.FirstName == "Theta"));
 		}
@@ -482,7 +482,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Db.Insert(new Person { Active = true, FirstName = "c", LastName = "c1", DateCreated = DateTime.UtcNow.AddDays(-3) });
 			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
 
-			int count = Db.Count<Person>(null);
+			var count = Db.Count<Person>(null);
 			Assert.AreEqual(4, count);
 		}
 
@@ -495,7 +495,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
 
 			var predicate = Predicates.Predicates.Field<Person>(f => f.DateCreated, Operator.Lt, DateTime.UtcNow.AddDays(-5));
-			int count = Db.Count<Person>(predicate);
+			var count = Db.Count<Person>(predicate);
 			Assert.AreEqual(2, count);
 		}
 
@@ -508,7 +508,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow.AddDays(-1) });
 
 			var predicate = new { FirstName = new[] { "b", "d" } };
-			int count = Db.Count<Person>(predicate);
+			var count = Db.Count<Person>(predicate);
 			Assert.AreEqual(2, count);
 		}
 	}
@@ -528,7 +528,7 @@ namespace ExistsForAll.DapperExtensions.IntegrationTests.Sqlite
 			Db.Insert(new Animal { Name = "Bar" });
 			Db.Insert(new Animal { Name = "Baz" });
 
-			GetMultiplePredicate predicate = new GetMultiplePredicate();
+			var predicate = new GetMultiplePredicate();
 			predicate.Add<Person>(null);
 			predicate.Add<Animal>(Predicates.Predicates.Field<Animal>(a => a.Name, Operator.Like, "Ba%"));
 			predicate.Add<Person>(Predicates.Predicates.Field<Person>(a => a.LastName, Operator.Eq, "c1"));

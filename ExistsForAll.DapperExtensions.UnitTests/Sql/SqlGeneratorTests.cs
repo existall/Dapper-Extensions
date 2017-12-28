@@ -240,7 +240,7 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 
 			var timeSpan12 = Run(() =>
 			{
-				for (int i = 0; i < 10000; i++)
+				for (var i = 0; i < 10000; i++)
 				{
 					var result = sut.Select(mapper, null, null, @params, null);
 				}

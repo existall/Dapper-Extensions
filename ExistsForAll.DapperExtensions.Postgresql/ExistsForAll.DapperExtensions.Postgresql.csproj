@@ -11,8 +11,6 @@
     <PackageTags>Orm Dapper DapperExtensions ExistForAll</PackageTags>
     <Authors>Guy Ludvig</Authors>
   </PropertyGroup>
-
-
   <ItemGroup>
     <ProjectReference Include="..\ExistsForAll.DapperExtensions\ExistsForAll.DapperExtensions.csproj" />
   </ItemGroup>

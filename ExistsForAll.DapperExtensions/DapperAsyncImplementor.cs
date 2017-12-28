@@ -236,7 +236,7 @@ namespace ExistsForAll.DapperExtensions
 			int? commandTimeout = null,
 			IList<IProjection> projections = null) where T : class
 		{
-			IClassMapper classMap = ClassMappers.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
 			return await GetListAsync<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, projections);
 		}
@@ -254,7 +254,7 @@ namespace ExistsForAll.DapperExtensions
 			int? commandTimeout = null,
 			IList<IProjection> projections = null) where T : class
 		{
-			IClassMapper classMap = ClassMappers.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
 			return await GetPageAsync<T>(connection, classMap, wherePredicate, sort, page, resultsPerPage, transaction, commandTimeout, projections);
 		}
@@ -271,7 +271,7 @@ namespace ExistsForAll.DapperExtensions
 			int? commandTimeout = null,
 			IList<IProjection> projections = null) where T : class
 		{
-			IClassMapper classMap = ClassMappers.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
 			return await GetSetAsync<T>(connection, classMap, wherePredicate, sort, firstResult, maxResults, transaction, commandTimeout, projections);
 		}
@@ -282,7 +282,7 @@ namespace ExistsForAll.DapperExtensions
 		public async Task<int> CountAsync<T>(IDbConnection connection, object predicate = null, IDbTransaction transaction = null,
 			int? commandTimeout = null) where T : class
 		{
-			IClassMapper classMap = ClassMappers.GetMap<T>();
+			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
 			var parameters = new Dictionary<string, object>();
 			var sql = SqlGenerator.Count(classMap, wherePredicate, parameters);
