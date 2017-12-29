@@ -1,19 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>Based Upon DapperExtensions this Orm Package is fully refactoerd for performance and with added features like projection and In Predicate</Description>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/existall/Dapper-Extensions</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/existall/Shepherd/master/art/exitsForAll_icon.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/existall/Dapper-Extensions</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>Orm Dapper DapperExtensions ExistForAll</PackageTags>
-    <Authors>Guy Ludvig</Authors>
-    <Version>1.1.0</Version>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.4" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
-  </ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard1.6</TargetFramework>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Description>Based Upon DapperExtensions this Orm Package is fully refactoerd for performance and with added features like projection and In Predicate</Description>
+		<PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/existall/Dapper-Extensions</PackageProjectUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/existall/Shepherd/master/art/exitsForAll_icon.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/existall/Dapper-Extensions</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<PackageTags>Orm Dapper DapperExtensions ExistForAll</PackageTags>
+		<Authors>Guy Ludvig</Authors>
+		<Version>1.1.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="1.50.4" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
+	</ItemGroup>
+
 </Project>
