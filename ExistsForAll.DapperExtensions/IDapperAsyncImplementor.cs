@@ -43,6 +43,13 @@ namespace ExistsForAll.DapperExtensions
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Update{T}(IDbConnection, T, IDbTransaction, int?)"/>.
 		/// </summary>
 		Task<bool> UpdateAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class;
+
+		Task<bool> UpdateAsync<T>(IDbConnection connection,
+			IPredicate predicate,
+			IList<IProjectionSet> projectionSets,
+			IDbTransaction transaction,
+			int? commandTimeout) where T : class;
+
 		/// <summary>
 		/// The asynchronous counterpart to <see cref="IDapperImplementor.Delete{T}(IDbConnection, T, IDbTransaction, int?)"/>.
 		/// </summary>

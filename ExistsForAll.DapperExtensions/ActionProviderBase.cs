@@ -3,13 +3,13 @@ using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
 {
-	internal abstract class GeneratorBase
+	internal abstract class ActionProviderBase
 	{
 		protected IDapperExtensionsConfiguration Configuration { get; }
 		protected IClassMapperRepository ClassMappers { get; }
 		protected ISqlGenerator SqlGenerator { get; }
 		
-		public GeneratorBase(IDapperExtensionsConfiguration configuration,
+		public ActionProviderBase(IDapperExtensionsConfiguration configuration,
 			IClassMapperRepository classMapperRepository,
 			ISqlGenerator sqlGenerator)
 		{

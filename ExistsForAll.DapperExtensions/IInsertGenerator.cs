@@ -13,9 +13,9 @@ namespace ExistsForAll.DapperExtensions
 		MultiActionParams InsertBatch(IClassMapper classMap, IEnumerable<object> entities);
 	}
 
-	internal class InsertGenerator : GeneratorBase,  IInsertGenerator
+	internal class InsertActionProvider : ActionProviderBase,  IInsertGenerator
 	{
-		public InsertGenerator(IDapperExtensionsConfiguration configuration,
+		public InsertActionProvider(IDapperExtensionsConfiguration configuration,
 			IClassMapperRepository classMapperRepository,
 			ISqlGenerator sqlGenerator) 
 			: base(configuration, classMapperRepository, sqlGenerator)

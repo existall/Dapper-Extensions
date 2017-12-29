@@ -19,18 +19,43 @@ namespace ExistsForAll.DapperExtensions
 		private readonly IGetGenerator _getGenerator;
 		private readonly IInsertGenerator _insertGenerator;
 		private readonly IUpdateActionsProvider _updateActionsProvider;
+		private readonly IDeleteActionsProvider _deleteActionsProvider;
+		private readonly ICountActionsProvider _countActionsProvider;
+		private readonly IAtomicIncrementActionProvider _atomicIncrement;
 
 		public DapperImplementor(ISqlGenerator sqlGenerator,
 			IClassMapperRepository classMappers,
 			IDapperExtensionsConfiguration dapperExtensionsConfiguration)
+			: this(sqlGenerator,
+				classMappers,
+				dapperExtensionsConfiguration,
+				new GetActionProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator),
+				new InsertActionProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator),
+				new UpdateActionsProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator),
+				new DeleteActionsProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator),
+				new CountActionsProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator),
+				new AtomicIncrementActionProvider(dapperExtensionsConfiguration, classMappers, sqlGenerator))
+		{ }
+
+		internal DapperImplementor(ISqlGenerator sqlGenerator,
+			IClassMapperRepository classMappers,
+			IDapperExtensionsConfiguration dapperExtensionsConfiguration,
+			IGetGenerator getGenerator,
+			IInsertGenerator insertGenerator,
+			IUpdateActionsProvider updateActionsProvider,
+			IDeleteActionsProvider deleteActionsProvider,
+			ICountActionsProvider countActionsProvider,
+			IAtomicIncrementActionProvider atomicIncrement)
 		{
+			_getGenerator = getGenerator;
+			_insertGenerator = insertGenerator;
+			_updateActionsProvider = updateActionsProvider;
+			_deleteActionsProvider = deleteActionsProvider;
+			_countActionsProvider = countActionsProvider;
+			_atomicIncrement = atomicIncrement;
 			ClassMappers = classMappers;
 			Configuration = dapperExtensionsConfiguration;
 			SqlGenerator = sqlGenerator;
-
-			_getGenerator = new GetGenerator(Configuration, classMappers, SqlGenerator);
-			_insertGenerator = new InsertGenerator(Configuration, classMappers, SqlGenerator);
-			_updateActionsProvider = new UpdateActionsProvider(dapperExtensionsConfiguration, ClassMappers, SqlGenerator);
 		}
 
 		public T Get<T>(IDbConnection connection, object id, IDbTransaction transaction, int? commandTimeout) where T : class
@@ -191,15 +216,10 @@ namespace ExistsForAll.DapperExtensions
 		{
 			var classMap = ClassMappers.GetMap<T>();
 			var wherePredicate = classMap.GetPredicate(predicate);
-			var parameters = new Dictionary<string, object>();
-			var sql = SqlGenerator.Count(classMap, wherePredicate, parameters);
-			var dynamicParameters = new DynamicParameters();
-			foreach (var parameter in parameters)
-			{
-				dynamicParameters.Add(parameter.Key, parameter.Value);
-			}
 
-			return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).Single()
+			var actionParams = _countActionsProvider.Count(classMap, wherePredicate);
+
+			return (int)connection.Query(actionParams.Sql, actionParams.DynamicParameterses, transaction, false, commandTimeout, CommandType.Text).Single()
 				.Total;
 		}
 
@@ -225,18 +245,10 @@ namespace ExistsForAll.DapperExtensions
 			Guard.ArgumentNull(predicate, nameof(predicate));
 
 			var classMap = ClassMappers.GetMap<T>();
-			var target = classMap.GetPropertyMapByName(projection.PropertyName);
 
-			if (target.Ignored || target.IsReadOnly)
-				throw new InvalidOperationException(
-					$"Atomic increment is not allowed on {projection.PropertyName} for type {classMap.EntityType}. It's either ignored or read only");
+			var actionParams = _atomicIncrement.AtomicIncrement(classMap, (IPredicate)predicate, projection, amount);
 
-			var wherePredicate = classMap.GetPredicate(predicate);
-			var parameters = new Dictionary<string, object>();
-
-			var sql = SqlGenerator.AtomicIncrement(classMap, wherePredicate, parameters, projection, amount);
-
-			return connection.Execute(sql, parameters, dbTransaction, commandTimeout, CommandType.Text);
+			return connection.Execute(actionParams.Sql, actionParams.DynamicParameterses, dbTransaction, commandTimeout, CommandType.Text);
 		}
 
 		protected IEnumerable<T> GetList<T>(IDbConnection connection,
@@ -287,18 +299,13 @@ namespace ExistsForAll.DapperExtensions
 			return connection.Query<T>(actionParams.Sql, actionParams.DynamicParameterses, transaction, buffered, commandTimeout, CommandType.Text);
 		}
 
-		protected bool Delete<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate,
+		protected bool Delete<T>(IDbConnection connection,
+			IClassMapper classMap,
+			IPredicate predicate,
 			IDbTransaction transaction, int? commandTimeout) where T : class
 		{
-			var parameters = new Dictionary<string, object>();
-			var sql = SqlGenerator.Delete(classMap, predicate, parameters);
-			var dynamicParameters = new DynamicParameters();
-			foreach (var parameter in parameters)
-			{
-				dynamicParameters.Add(parameter.Key, parameter.Value);
-			}
-
-			return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text) > 0;
+			var actionParams = _deleteActionsProvider.Delete(classMap, predicate);
+			return connection.Execute(actionParams.Sql, actionParams.DynamicParameterses, transaction, commandTimeout, CommandType.Text) > 0;
 		}
 
 		protected GridReaderResultReader GetMultipleByBatch(IDbConnection connection, GetMultiplePredicate predicate,

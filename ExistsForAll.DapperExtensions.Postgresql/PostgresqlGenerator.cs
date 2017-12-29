@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Schema;
 using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Sql;
 
@@ -36,10 +35,6 @@ namespace ExistsForAll.DapperExtensions.Postgresql
 		private string GetUpdateSection(IClassMapper classMap)
 		{
 			var columns = classMap.GetMutableColumns();
-
-			var columnNames = columns.Select(p => GetColumnName(classMap, p, false));
-
-			var parameters = columns.Select(p => Configuration.Dialect.ParameterPrefix + p.Name);
 
 			var updateSql = columns.Select(
 				p => $"{GetColumnName(classMap, p, false)} = {Configuration.Dialect.ParameterPrefix}{p.Name}");

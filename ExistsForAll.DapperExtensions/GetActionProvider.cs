@@ -6,9 +6,9 @@ using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions
 {
-	internal class GetGenerator : GeneratorBase, IGetGenerator
+	internal class GetActionProvider : ActionProviderBase, IGetGenerator
 	{
-		public GetGenerator(IDapperExtensionsConfiguration configuration, IClassMapperRepository classMapperRepository,
+		public GetActionProvider(IDapperExtensionsConfiguration configuration, IClassMapperRepository classMapperRepository,
 			ISqlGenerator sqlGenerator) : base(configuration, classMapperRepository, sqlGenerator)
 		{
 		}

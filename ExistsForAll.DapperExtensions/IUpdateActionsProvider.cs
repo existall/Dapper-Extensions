@@ -13,7 +13,7 @@ namespace ExistsForAll.DapperExtensions
 		ActionParams Update(IClassMapper classMap, object entity);
 	}
 
-	internal class UpdateActionsProvider : GeneratorBase, IUpdateActionsProvider
+	internal class UpdateActionsProvider : ActionProviderBase, IUpdateActionsProvider
 	{
 		public UpdateActionsProvider(IDapperExtensionsConfiguration configuration,
 			IClassMapperRepository classMapperRepository,

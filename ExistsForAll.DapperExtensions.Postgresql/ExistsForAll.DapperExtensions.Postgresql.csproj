@@ -10,6 +10,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Orm Dapper DapperExtensions ExistForAll</PackageTags>
     <Authors>Guy Ludvig</Authors>
+	<Version>1.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExistsForAll.DapperExtensions\ExistsForAll.DapperExtensions.csproj" />
