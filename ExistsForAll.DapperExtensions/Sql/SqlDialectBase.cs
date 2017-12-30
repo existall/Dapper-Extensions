@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ExistsForAll.DapperExtensions.Mapper;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
@@ -83,6 +84,11 @@ namespace ExistsForAll.DapperExtensions.Sql
 				return value;
 			}
 			return string.Format("{0}{1}{2}", OpenQuote, value.Trim(), CloseQuote);
+		}
+
+		public virtual string GetUpsertSql(IClassMapper classMapper)
+		{
+			throw new NotImplementedException();
 		}
 
 		public virtual string UnQuoteString(string value)

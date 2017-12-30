@@ -65,5 +65,8 @@ namespace ExistsForAll.DapperExtensions
 			int amount,
 			IDbTransaction dbTransaction,
 			int? commandTimeout) where T : class;
+
+		Task Upsert<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout)
+			where T : class;
 	}
 }

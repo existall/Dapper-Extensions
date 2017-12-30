@@ -11,10 +11,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExistsForAll.DapperExtensions.Postgresql\ExistsForAll.DapperExtensions.Postgresql.csproj">
-      <Project>{389157CD-9BF4-40FC-BBF2-3A8A91255058}</Project>
-      <Name>ExistsForAll.DapperExtensions.Postgresql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ExistsForAll.DapperExtensions\ExistsForAll.DapperExtensions.csproj" />
   </ItemGroup>
 </Project>

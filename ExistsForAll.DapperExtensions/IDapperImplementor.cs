@@ -22,5 +22,8 @@ namespace ExistsForAll.DapperExtensions
 		int AtomicIncrement<T>(IDbConnection connection, object predicate, IProjection projection, int amount,
 			IDbTransaction dbTransaction,
 			int? commandTimeout) where T : class;
+
+		void Upsert<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout)
+			where T : class;
 	}
 }

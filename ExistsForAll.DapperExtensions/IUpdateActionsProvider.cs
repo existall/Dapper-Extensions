@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using ExistsForAll.DapperExtensions.Mapper;
@@ -11,6 +12,7 @@ namespace ExistsForAll.DapperExtensions
 	{
 		ActionParams Update(IClassMapper classMap, IPredicate predicate, IList<IProjectionSet> projectionSets);
 		ActionParams Update(IClassMapper classMap, object entity);
+		ActionParams Upsert(IClassMapper classMap, object entity);
 	}
 
 	internal class UpdateActionsProvider : ActionProviderBase, IUpdateActionsProvider
@@ -55,6 +57,38 @@ namespace ExistsForAll.DapperExtensions
 			foreach (var parameter in parameters)
 			{
 				dynamicParameters.Add(parameter.Key, parameter.Value);
+			}
+
+			return ActionParams.New(sql, dynamicParameters);
+		}
+
+		public ActionParams Upsert(IClassMapper classMap, object entity)
+		{
+			var columns = classMap.GetNotIgnoredColumns();
+
+			var guids = new IPropertyMap[0];
+
+			if (Configuration.AutoPopulateKeyGuidValue)
+			{
+				guids = columns.Where(x => x.PropertyInfo.PropertyType == typeof(Guid)).ToArray();
+
+				foreach (var guid in guids)
+				{
+					if ((Guid)guid.Getter(entity) != Guid.Empty)
+						continue;
+
+					var value = Configuration.GuidCreator.GetGuid();
+					guid.Setter(entity, value);
+				}
+			}
+
+			var sql = Configuration.Dialect.GetUpsertSql(classMap);
+
+			var dynamicParameters = new DynamicParameters();
+
+			foreach (var column in columns)
+			{
+				dynamicParameters.Add(column.Name, column.Getter(entity));
 			}
 
 			return ActionParams.New(sql, dynamicParameters);

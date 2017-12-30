@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ExistsForAll.DapperExtensions.Mapper;
 
 namespace ExistsForAll.DapperExtensions.Sql
 {
@@ -17,5 +18,6 @@ namespace ExistsForAll.DapperExtensions.Sql
 		string GetSetSql(string sql, int firstResult, int maxResults, IDictionary<string, object> parameters);
 		bool IsQuoted(string value);
 		string QuoteString(string value);
+		string GetUpsertSql(IClassMapper classMapper);
 	}
 }

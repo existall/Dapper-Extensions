@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExistsForAll.DapperExtensions.Mapper;
 using ExistsForAll.DapperExtensions.Sql;
 
 namespace ExistsForAll.DapperExtensions.UnitTests.Sql
@@ -60,6 +61,11 @@ namespace ExistsForAll.DapperExtensions.UnitTests.Sql
 				return value;
 			}
 			return $"{OpenQuote}{value.Trim()}{CloseQuote}";
+		}
+
+		public string GetUpsertSql(IClassMapper classMapper)
+		{
+			return "";
 		}
 	}
 }
