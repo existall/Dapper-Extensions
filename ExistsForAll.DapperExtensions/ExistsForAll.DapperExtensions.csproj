@@ -11,8 +11,10 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>Orm Dapper DapperExtensions ExistForAll</PackageTags>
 		<Authors>Guy Ludvig</Authors>
-		<Version>1.1.0</Version>
+		<!--<Version>1.1.0</Version>-->
 	</PropertyGroup>
+
+	<Import Project="../version.props"></Import>
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="1.50.4" />
